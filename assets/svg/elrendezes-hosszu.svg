@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" width="320" height="220" role="img" aria-label="Hosszú asztal elrendezés: egy közös, hosszú asztal, két oldalán ülőhelyekkel.">
+  <g fill="none" stroke="#6c7d58" stroke-width="1.2" stroke-linejoin="round">
+    <!-- asztal -->
+    <rect x="112" y="34" width="96" height="152" rx="2"/>
+    <line x1="160" y1="34" x2="160" y2="186" stroke-dasharray="3 5" opacity=".45"/>
+    <!-- bal oldali székek -->
+    <rect x="84" y="46" width="20" height="24" rx="4"/>
+    <rect x="84" y="82" width="20" height="24" rx="4"/>
+    <rect x="84" y="118" width="20" height="24" rx="4"/>
+    <rect x="84" y="154" width="20" height="24" rx="4"/>
+    <!-- jobb oldali székek -->
+    <rect x="216" y="46" width="20" height="24" rx="4"/>
+    <rect x="216" y="82" width="20" height="24" rx="4"/>
+    <rect x="216" y="118" width="20" height="24" rx="4"/>
+    <rect x="216" y="154" width="20" height="24" rx="4"/>
+    <!-- fő helyek -->
+    <rect x="148" y="8" width="24" height="18" rx="4"/>
+    <rect x="148" y="194" width="24" height="18" rx="4"/>
+  </g>
+</svg>

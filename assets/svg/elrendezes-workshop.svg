@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" width="320" height="220" role="img" aria-label="Workshop elrendezés: előadói asztal és sorokba rendezett ülőhelyek.">
+  <g fill="none" stroke="#6c7d58" stroke-width="1.2" stroke-linejoin="round">
+    <!-- előadói asztal -->
+    <rect x="118" y="20" width="84" height="18" rx="2"/>
+    <line x1="160" y1="48" x2="160" y2="58" stroke-dasharray="3 5" opacity=".45"/>
+    <!-- első sor -->
+    <rect x="74" y="80" width="20" height="16" rx="4"/>
+    <rect x="112" y="80" width="20" height="16" rx="4"/>
+    <rect x="150" y="80" width="20" height="16" rx="4"/>
+    <rect x="188" y="80" width="20" height="16" rx="4"/>
+    <rect x="226" y="80" width="20" height="16" rx="4"/>
+    <!-- második sor -->
+    <rect x="74" y="126" width="20" height="16" rx="4"/>
+    <rect x="112" y="126" width="20" height="16" rx="4"/>
+    <rect x="150" y="126" width="20" height="16" rx="4"/>
+    <rect x="188" y="126" width="20" height="16" rx="4"/>
+    <rect x="226" y="126" width="20" height="16" rx="4"/>
+    <!-- harmadik sor -->
+    <rect x="74" y="172" width="20" height="16" rx="4"/>
+    <rect x="112" y="172" width="20" height="16" rx="4"/>
+    <rect x="150" y="172" width="20" height="16" rx="4"/>
+    <rect x="188" y="172" width="20" height="16" rx="4"/>
+    <rect x="226" y="172" width="20" height="16" rx="4"/>
+  </g>
+</svg>

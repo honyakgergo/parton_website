@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" width="320" height="220" role="img" aria-label="Kerek asztalos elrendezés: több kisebb asztal, körben ülőhelyekkel.">
+  <g fill="none" stroke="#6c7d58" stroke-width="1.2">
+    <!-- asztal 1 -->
+    <circle cx="86" cy="70" r="28"/>
+    <circle cx="126" cy="70" r="7"/><circle cx="106" cy="105" r="7"/><circle cx="66" cy="105" r="7"/>
+    <circle cx="46" cy="70" r="7"/><circle cx="66" cy="35" r="7"/><circle cx="106" cy="35" r="7"/>
+    <!-- asztal 2 -->
+    <circle cx="234" cy="70" r="28"/>
+    <circle cx="274" cy="70" r="7"/><circle cx="254" cy="105" r="7"/><circle cx="214" cy="105" r="7"/>
+    <circle cx="194" cy="70" r="7"/><circle cx="214" cy="35" r="7"/><circle cx="254" cy="35" r="7"/>
+    <!-- asztal 3 -->
+    <circle cx="160" cy="164" r="28"/>
+    <circle cx="200" cy="164" r="7"/><circle cx="180" cy="199" r="7"/><circle cx="140" cy="199" r="7"/>
+    <circle cx="120" cy="164" r="7"/><circle cx="140" cy="129" r="7"/><circle cx="180" cy="129" r="7"/>
+  </g>
+</svg>

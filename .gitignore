@@ -1,0 +1,16 @@
+# Az eredeti, nagy felbontású fotók és a kliens leírása nem kerülnek fel:
+# a weboldal csak az assets/img/ optimalizált változatait használja.
+# FONTOS: ezeket külön mentsd el, mert a repóban nem lesznek benne!
+images/
+instructions/
+
+# Python
+__pycache__/
+*.pyc
+
+# Szerkesztő / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
