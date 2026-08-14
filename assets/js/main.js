@@ -71,10 +71,10 @@
   }
 
   /* --- 2b. Olajfaág motívum kibontakozása ----------------------------- */
-  var features = document.querySelector('.features');
-  if (features) {
+  var leafBands = document.querySelectorAll('.features, .pagehero');
+  if (leafBands.length) {
     if (reduced || !('IntersectionObserver' in window)) {
-      features.classList.add('is-grown');
+      leafBands.forEach(function (el) { el.classList.add('is-grown'); });
     } else {
       var leafIo = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -83,8 +83,8 @@
             leafIo.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.25 });
-      leafIo.observe(features);
+      }, { threshold: 0.2 });
+      leafBands.forEach(function (el) { leafIo.observe(el); });
     }
   }
 
@@ -327,15 +327,15 @@
 
       var write = function () {
         var start = null;
-        var duration = 4600;   // hosszabb, kényelmesebb tempó
+        var duration = 3600;
 
         var step = function (now) {
           if (start === null) start = now;
           var t = Math.min((now - start) / duration, 1);
-          // lágy indulás és lassuló befejezés — mint egy tollvonás
-          var eased = t < 0.5
-            ? 2 * t * t
-            : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          /* Ease-out: a toll már az első pillanatban teljes tempóval indul,
+             és csak a végén lassul le. (A korábbi ease-in-out az első egy
+             másodpercben alig haladt – ezért tűnt úgy, hogy késik.) */
+          var eased = Math.sin(t * Math.PI / 2);
           pen.style.setProperty('--pen', (eased * 110).toFixed(2) + '%');
           if (t < 1) window.requestAnimationFrame(step);
         };
@@ -355,7 +355,7 @@
             }
           }
         });
-      }, { threshold: 0.55 });
+      }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
 
       penIo.observe(pen);
     }

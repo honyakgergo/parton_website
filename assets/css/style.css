@@ -7,6 +7,7 @@
 /* --- 1. Tokenek ---------------------------------------------------------- */
 :root{
   --cream:        #fff6e0;
+  --cream-light:  #fffcf2;
   --cream-dim:    #f8eed6;
   --paper:        #fffbec;
   --green:        #6c7d58;
@@ -213,6 +214,9 @@ p:last-child{ margin-bottom: 0; }
   top: 0;
   z-index: 100;
   background: var(--cream);
+  /* hajszálvonal zárja a fejlécet, hogy elváljon az alatta lévő sávtól
+     akkor is, ha ugyanaz a bézs */
+  border-bottom: 1px solid var(--line);
   transition: box-shadow .5s var(--ease);
 }
 .header.is-stuck{ box-shadow: 0 1px 0 var(--line), 0 8px 30px rgba(78,91,63,.06); }
@@ -287,9 +291,9 @@ p:last-child{ margin-bottom: 0; }
 }
 .nav__link{
   position: relative;
-  font-size: .68rem;
+  font-size: .78rem;
   font-weight: 400;
-  letter-spacing: .17em;
+  letter-spacing: .15em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--ink-soft);
@@ -312,7 +316,7 @@ p:last-child{ margin-bottom: 0; }
 .nav__link[aria-current="page"]{ color: var(--green-dark); }
 .nav__link[aria-current="page"]::after{ transform: scaleX(1); }
 
-.nav__cta{ padding: 1.05em 1.7em; margin-left: clamp(6px, 1vw, 18px); }
+.nav__cta{ padding: 1.05em 1.7em; margin-left: clamp(6px, 1vw, 18px); font-size: .76rem; }
 
 .burger{
   display: none;
@@ -524,32 +528,36 @@ p:last-child{ margin-bottom: 0; }
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(24px, 3.4vw, 60px);
-  max-width: 1080px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(18px, 2.4vw, 40px);
+  max-width: 1180px;
   margin-inline: auto;
 }
 .feature{ text-align: center; padding-inline: clamp(8px, 1.8vw, 30px); }
 .feature + .feature{ border-left: 1px solid var(--line); }
 .feature__icon{
-  width: 42px; height: 42px;
-  margin: 0 auto 18px;
+  width: 50px; height: 50px;
+  margin: 0 auto 20px;
   object-fit: contain;
 }
 .feature__title{
   font-family: var(--body);
-  font-size: .72rem;
+  font-size: .84rem;
   font-weight: 600;
-  letter-spacing: .19em;
+  letter-spacing: .17em;
   text-transform: uppercase;
   color: var(--ink);
-  margin: 0 0 .7em;
+  margin: 0 0 .75em;
 }
 .feature__text{
-  font-size: .85rem;
+  font-size: .97rem;
   line-height: 1.7;
   color: var(--ink-soft);
   margin: 0;
+}
+@media (max-width: 1000px){
+  .features__grid{ grid-template-columns: 1fr 1fr; gap: 34px 24px; }
+  .feature:nth-child(3){ border-left: 0; }
 }
 @media (max-width: 760px){
   .features__grid{ grid-template-columns: 1fr; gap: 34px; }
@@ -617,8 +625,8 @@ p:last-child{ margin-bottom: 0; }
 /* --- 10. Alkalom kártyák ------------------------------------------------- */
 .cards{
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(12px, 1.6vw, 24px);
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(10px, 1.2vw, 20px);
 }
 .card{
   display: flex;
@@ -686,7 +694,7 @@ p:last-child{ margin-bottom: 0; }
 .hscroll__sticky{
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: min(92vh, 880px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1027,11 +1035,180 @@ p:last-child{ margin-bottom: 0; }
   transition: color .35s var(--ease);
 }
 a.contact__value:hover{ color: var(--green); }
+@media (min-width: 861px){
+  /* Kapcsolat: a kép balra kerül, mert a nyitósávban jobbra van */
+  .contact--flip > :last-child{ order: -1; }
+}
+
+/* --- 17c. Váltakozó hátterű sávok, átnyúló képpel --------------------- */
+/* Egyik sáv bézs, a következő mélyzöld, és a kép átnyúlik a két szín
+   határán – ez adja a szerkesztői, rétegzett hatást. */
+.band{
+  --band-pad: clamp(72px, 8vw, 130px);
+  /* alaphelyzetben a kép a saját sávján belül marad */
+  --band-overhang: 0px;
+  position: relative;
+  padding-block: var(--band-pad);
+  background: var(--cream);
+}
+.band--green{ background: var(--green-dark); }
+
+.band__inner{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(30px, 5vw, 80px);
+  align-items: center;
+}
+.band--media-left .band__media{ order: -1; }
+
+.band__copy{
+  max-width: 52ch;
+}
+.band__copy .lede{ color: inherit; }
+
+/* A kép alsó éle a sáv alatti színbe nyúlik át. A negatív margin miatt a
+   sáv magassága nem nő, a z-index pedig a következő szakasz háttere elé
+   emeli. (A szakaszokon nincs z-index, ezért ez működik.) */
+.band__media{
+  position: relative;
+  z-index: 2;
+  /* stretch: a kép a sor teljes magasságát kitölti, így nem marad üres sáv
+     a kép felett, ha a szöveg magasabb */
+  align-self: stretch;
+  margin: 0 0 calc(-1 * var(--band-overhang));
+  overflow: hidden;
+}
+.band__media img{
+  width: 100%;
+  height: 100%;
+  min-height: clamp(300px, 28vw, 500px);
+  object-fit: cover;
+}
+.band__media--tall img{ min-height: clamp(360px, 34vw, 620px); }
+
+/* Nyitósáv: ugyanaz a bézs, mint a fejléc (a hajszálvonal választja el), és
+   csak ITT nyúlik át a kép a következő színbe – lentebb minden kép a saját
+   sávjában marad. */
+.band--hero{
+  background: var(--cream);
+  /* kisebb felső padding, hogy a nagyobb képek mellett a zöld vonal ne
+     kerüljön lejjebb */
+  --band-pad: clamp(44px, 4.6vw, 50px);
+  /* nagyobb átnyúlás: a kép mélyebben ül bele a zöld sávba, így kevesebb
+     üres zöld látszik alatta */
+  --band-overhang: clamp(40px, 7vw, 132px);
+  padding-block: var(--band-pad) 0;
+}
+/* a nyitósáv képe teljes egészében látszik: saját oldalarány, nincs vágás.
+   A magasság fix (nem a szöveg hossza szabja meg), így minden oldalon
+   ugyanott kezdődik a zöld sáv és ugyanolyan méretű a kép. */
+.band--hero .band__inner{ min-height: clamp(420px, 30vw, 600px); }
+.band--hero .band__media{
+  align-self: end;
+  display: flex;
+  justify-content: flex-end;
+}
+.band--hero .band__media img{
+  height: clamp(300px, 25vw, 504px);
+  width: auto;
+  max-width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+}
+.band--hero .band__media--wide img{ aspect-ratio: 3 / 2; }
+/* álló kép: magasabb, mint a fekvők, de az alja ugyanoda ér – a zöld vonal
+   nem mozdul, mert azt a sor fix magassága szabja meg */
+.band--hero .band__media--portrait img{
+  aspect-ratio: 2 / 3;
+  height: clamp(360px, 30vw, 600px);
+}
+/* ott, ahol nem zöld sáv következik, a kép felülre igazodik – nincs üres sáv
+   a kép felett, és nincs értelme az átnyúlásnak sem */
+.band--hero .band__media--top{
+  align-self: start;
+  margin-bottom: 0;
+}
+/* nagyobb kép a nyitósávban: fele-fele osztás */
+.band--hero--media-big .band__inner{
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.band--hero--media-big .band__media img{ height: clamp(320px, 26vw, 500px); }
+
+/* Két fekvő kép egymás alatt, ugyanazon bekezdés mellett. */
+.band__media--pair{
+  display: grid;
+  gap: clamp(10px, 1.2vw, 18px);
+  align-self: center;
+}
+.band__media--pair img{
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 3 / 2;
+}
+.band--hero .band__inner{
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.band--hero .band__copy{
+  max-width: none;
+  padding-bottom: clamp(24px, 3vw, 48px);
+}
+.band--hero .band__copy .lede{ max-width: 54ch; }
+.band--hero .kicker{ margin-bottom: 1.2em; }
+.band--hero h1{
+  font-size: clamp(2.3rem, 4.4vw, 3.8rem);
+  font-weight: 400;
+}
+
+/* Ikonok a sávokban. Zöld háttéren a kliens zöld ikonjai eltűnnének, ezért
+   ott krémszínűre váltanak (PNG: filter, inline SVG: stroke). */
+.band__icon{
+  width: 46px; height: 46px;
+  margin-bottom: 22px;
+  object-fit: contain;
+}
+.band--green img.band__icon{ filter: brightness(0) invert(1); opacity: .9; }
+.band--green svg.band__icon g{ stroke: var(--cream); }
+
+/* zöld sávon krémszínű tipográfia. A .prose p / strong szabályokat is felül
+   kell írni, különben a bekezdések sötétek maradnak és olvashatatlanok. */
+.band--green .band__copy{ color: rgba(255, 246, 224, .86); }
+.band--green .band__copy p,
+.band--green .band__copy li{ color: rgba(255, 246, 224, .86); }
+.band--green .band__copy h2,
+.band--green .band__copy h3,
+.band--green .band__copy strong{ color: var(--cream); }
+.band--green .band__copy .lede{ color: rgba(255, 246, 224, .94); }
+.band--green .textlink{ color: var(--cream); border-color: rgba(255,246,224,.4); }
+.band--green .textlink:hover{ border-color: var(--cream); }
+
+@media (max-width: 900px){
+  .band{ padding-block: clamp(46px, 9vw, 76px); }
+  .band--hero{ padding-block: clamp(46px, 9vw, 76px) 0; }
+  .band__inner,
+  .band--hero .band__inner{ grid-template-columns: 1fr; gap: clamp(26px, 6vw, 36px); }
+  .band--media-left .band__media{ order: 0; }
+  .band__copy{ max-width: none; }
+  .band--hero .band__inner{ min-height: 0; }
+  .band--hero .band__media{ display: block; }
+  .band--hero .band__media img,
+  .band--hero--media-big .band__media img{
+    height: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  .band--hero .band__copy{ padding-bottom: clamp(26px, 6vw, 36px); }
+  .band--hero .band__media{ margin-bottom: calc(-1 * clamp(20px, 5vw, 40px)); }
+  .band__media img{ height: auto; min-height: 0; aspect-ratio: 4 / 3; }
+}
+
 @media (max-width: 860px){ .contact{ grid-template-columns: 1fr; } }
 
 /* --- 18. Záró felhívás (kézírás animáció) ------------------------------ */
 .callout{
-  padding-block: clamp(80px, 10vw, 150px);
+  /* felül szűk: korábban nagy üres sáv volt a kézírás felett, és ezért
+     az animáció is későn indult el */
+  padding-block: clamp(18px, 2vw, 34px) clamp(58px, 7vw, 106px);
   text-align: center;
   background: var(--cream-dim);
 }
@@ -1043,8 +1220,10 @@ a.contact__value:hover{ color: var(--green); }
      alsó szárai (g, j, p) kilógnak a maszkból és letörődnek. */
   line-height: 1.5;
   padding-block: .08em .2em;
+  /* az 1.5-es sorméret kell a maszknak (különben letöri az alsó szárakat),
+     de a felül keletkező felesleget negatív marginóval vissza is vesszük */
+  margin: -.2em 0 .16em;
   color: var(--green-dark);
-  margin: 0 0 .2em;
   /* a JS balról jobbra "megírja" — alapból teljesen látszik */
   -webkit-mask-image: linear-gradient(90deg, #000 var(--pen, 110%),
                                        rgba(0,0,0,0) calc(var(--pen, 110%) + 7%));
@@ -1142,12 +1321,94 @@ a.contact__value:hover{ color: var(--green); }
 }
 
 /* --- 20. Belső oldalak fejrésze ---------------------------------------- */
+/* Jogi oldalakhoz: egyszerű szövegsáv. */
 .pagehead{
   padding-block: clamp(56px, 7vw, 104px) clamp(40px, 5vw, 68px);
   background: var(--cream-dim);
 }
 .pagehead__inner{ max-width: 760px; }
 .pagehead .kicker{ margin-bottom: 1.1em; }
+
+/* Tartalmi oldalak nyitósávja: a főoldali hero fordítottja. Ott a kép a nagy
+   és a szöveg a kicsi; itt a súlypont a szövegen van, a kép pedig keskenyebb
+   sávban ül a jobb szélen, és a bal éle olvad bele a bézsbe. */
+.pagehero{
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* A magasság a képsáv szélességéhez van kötve (52vw / 1.5), így a sáv
+     aránya követi a fotó 3:2 arányát és nem vág le belőle. */
+  min-height: clamp(500px, 34.5vw, 780px);
+  /* eltérő tónus, mint a fejléc és az alatta következő szakaszok */
+  background: var(--cream-dim);
+  overflow: hidden;
+}
+.pagehero__copy{
+  position: relative;
+  z-index: 2;
+  box-sizing: content-box;
+  width: min(600px, 40vw);
+  flex: none;
+  padding: clamp(48px, 5.5vw, 84px) clamp(24px, 2.5vw, 44px) clamp(48px, 5.5vw, 84px)
+           max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+}
+.pagehero__cta{ margin-top: 2.2em; }
+.pagehero__copy .kicker{ margin-bottom: 1.2em; }
+.pagehero__copy h1{
+  font-size: clamp(2.3rem, 4.4vw, 3.8rem);
+  font-weight: 400;
+}
+.pagehero__copy .lede{ max-width: 52ch; }
+
+.pagehero__media{
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  left: 48%;
+  overflow: hidden;
+  /* ugyanaz az ívelt átmenet, mint a főoldalon, csak keskenyebb sávon */
+  -webkit-mask-image: radial-gradient(46% 150% at 0% 50%,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,.35) 64%, #000 100%);
+          mask-image: radial-gradient(46% 150% at 0% 50%,
+      rgba(0,0,0,0) 0%, rgba(0,0,0,0) 26%, rgba(0,0,0,.35) 64%, #000 100%);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+}
+.pagehero__media img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  animation: heroIn 1.9s var(--ease) both;
+  /* a felső és alsó él csak a szöveg felé eső sávban halványul */
+  -webkit-mask-image:
+      linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, #000 58%),
+      linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 6%, #000 94%, rgba(0,0,0,0) 100%);
+          mask-image:
+      linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 30%, #000 58%),
+      linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 6%, #000 94%, rgba(0,0,0,0) 100%);
+  -webkit-mask-repeat: no-repeat, no-repeat;
+          mask-repeat: no-repeat, no-repeat;
+}
+
+@media (max-width: 900px){
+  .pagehero{ flex-direction: column; align-items: stretch; min-height: 0; }
+  .pagehero__copy{
+    box-sizing: border-box;
+    width: auto;
+    padding: clamp(32px, 7vw, 52px) var(--gutter) clamp(28px, 6vw, 40px);
+  }
+  .pagehero__media{
+    position: relative;
+    top: auto; right: auto; bottom: auto; left: auto;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .pagehero__media img{
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+}
 
 /* --- 21. Megjelenítő animáció ------------------------------------------ */
 .reveal{
