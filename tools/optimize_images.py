@@ -25,6 +25,7 @@ OUT = ROOT / "assets" / "img"
 LARGE = [800, 1200, 1600, 2200]          # sávokban / nyitósávban megjelenő képek
 HERO = [800, 1200, 1600, 2200, 2800, 3200]  # főoldali hero (kb. 86vw)
 SMALL = [600, 900, 1200, 1600]           # kisebb, álló képek
+ARCHIVE = [600, 960]                     # régi, kis felbontású családi fotók
 
 # eredeti fájl -> (kimeneti név, vágási arány, webp szélességek, jpeg tartalék)
 PHOTOS = {
@@ -67,8 +68,9 @@ PHOTOS = {
     "DSC_6757.jpg": ("rend-6",        3 / 2, LARGE, 1200),   # Kültéri rendezvények
     "DSC_6799.jpg": ("arak-1",        3 / 2, LARGE, 1200),   # Mielőtt döntesz
     "DSC_5409.jpg": ("kapcsolat-1",   3 / 2, LARGE, 1200),
-    "1.jpg":        ("rolunk-story-a", 3 / 2, LARGE, 1200),
-    "3.jpg":        ("rolunk-story-b", 3 / 2, LARGE, 1200),
+    # régi családi fotók: csak 960px szélesek, ezért kisebb lépcsőt kapnak
+    "1.jpg":        ("rolunk-story-a", 3 / 2, ARCHIVE, 800),
+    "3.jpg":        ("rolunk-story-b", 3 / 2, ARCHIVE, 800),
 }
 
 # eredeti fájl -> (kimeneti név, méret px)

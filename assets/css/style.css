@@ -1093,23 +1093,23 @@ a.contact__value:hover{ color: var(--green); }
   background: var(--cream);
   /* kisebb felső padding, hogy a nagyobb képek mellett a zöld vonal ne
      kerüljön lejjebb */
-  --band-pad: clamp(44px, 4.6vw, 50px);
-  /* nagyobb átnyúlás: a kép mélyebben ül bele a zöld sávba, így kevesebb
-     üres zöld látszik alatta */
-  --band-overhang: clamp(40px, 7vw, 132px);
+  --band-pad: clamp(28px, 3vw, 34px);
+  /* a kép csak kicsit nyúlik bele a zöld sávba – minden más (sorméret,
+     szöveg, zöld vonal helye) változatlan */
+  --band-overhang: clamp(24px, 3.2vw, 64px);
   padding-block: var(--band-pad) 0;
 }
 /* a nyitósáv képe teljes egészében látszik: saját oldalarány, nincs vágás.
    A magasság fix (nem a szöveg hossza szabja meg), így minden oldalon
    ugyanott kezdődik a zöld sáv és ugyanolyan méretű a kép. */
-.band--hero .band__inner{ min-height: clamp(420px, 30vw, 600px); }
+.band--hero .band__inner{ min-height: clamp(440px, 33.5vw, 676px); }
 .band--hero .band__media{
   align-self: end;
   display: flex;
   justify-content: flex-end;
 }
 .band--hero .band__media img{
-  height: clamp(300px, 25vw, 504px);
+  height: clamp(330px, 28vw, 568px);
   width: auto;
   max-width: 100%;
   min-height: 0;
@@ -1121,25 +1121,33 @@ a.contact__value:hover{ color: var(--green); }
    nem mozdul, mert azt a sor fix magassága szabja meg */
 .band--hero .band__media--portrait img{
   aspect-ratio: 2 / 3;
-  height: clamp(360px, 30vw, 600px);
+  height: clamp(400px, 33.5vw, 676px);
 }
 /* ott, ahol nem zöld sáv következik, a kép felülre igazodik – nincs üres sáv
    a kép felett, és nincs értelme az átnyúlásnak sem */
 .band--hero .band__media--top{
   align-self: start;
   margin-bottom: 0;
+  margin-top: clamp(16px, 2vw, 32px);
 }
+/* ...és ilyenkor a sávnak sem kell a fix magasság, különben nagy üres hely
+   marad a kép alatt a következő szakasz előtt */
+.band--hero--compact{ padding-block: var(--band-pad) clamp(28px, 3vw, 44px); }
+.band--hero--compact .band__inner{ min-height: 0; }
 /* nagyobb kép a nyitósávban: fele-fele osztás */
 .band--hero--media-big .band__inner{
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 .band--hero--media-big .band__media img{ height: clamp(320px, 26vw, 500px); }
 
-/* Két fekvő kép egymás alatt, ugyanazon bekezdés mellett. */
+/* Két fekvő kép egymás alatt, ugyanazon bekezdés mellett. Szélességben
+   korlátozva, mert ezek régi, kis felbontású családi fotók. */
 .band__media--pair{
   display: grid;
   gap: clamp(10px, 1.2vw, 18px);
   align-self: center;
+  width: min(100%, 600px);
+  margin-inline-start: auto;
 }
 .band__media--pair img{
   height: auto;
@@ -1147,10 +1155,14 @@ a.contact__value:hover{ color: var(--green); }
   aspect-ratio: 3 / 2;
 }
 .band--hero .band__inner{
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
 }
 .band--hero .band__copy{
   max-width: none;
+  /* felülre igazítva, egy fix belső térrel: így a szöveg minden belső oldalon
+     pontosan ugyanabban a magasságban kezdődik, függetlenül a hosszától */
+  align-self: start;
+  padding-top: clamp(24px, 3.5vw, 56px);
   padding-bottom: clamp(24px, 3vw, 48px);
 }
 .band--hero .band__copy .lede{ max-width: 54ch; }
