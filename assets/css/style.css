@@ -497,7 +497,7 @@ p:last-child{ margin-bottom: 0; }
 .features__leaf{
   position: absolute;
   top: 50%;
-  width: clamp(170px, 20vw, 330px);
+  width: clamp(130px, 15vw, 250px);
   opacity: 0;
   pointer-events: none;
   user-select: none;
@@ -507,15 +507,15 @@ p:last-child{ margin-bottom: 0; }
               transform 1.9s var(--ease);
 }
 .features__leaf--l{
-  left: -40px;
+  left: -22px;
   transform: translateY(-50%) rotate(-7deg) scale(.86);
 }
 .features__leaf--r{
-  right: -40px;
+  right: -22px;
   transform: translateY(-50%) scaleX(-1) rotate(-7deg) scale(.86);
 }
 .features.is-grown .features__leaf{
-  opacity: .3;
+  opacity: .26;
   clip-path: circle(150% at 6% 94%);
 }
 .features.is-grown .features__leaf--l{
@@ -1074,6 +1074,16 @@ a.contact__value:hover{ color: var(--green); }
 }
 .band--green{ background: var(--green-dark); }
 
+/* Minden sáv legalább egy teljes képernyőt kitölt – így görgetéskor egy
+   képernyő zöld, majd egy képernyő bézs következik. A nyitósáv kivétel:
+   annak saját, rögzített magassága van. */
+.band:not(.band--hero){
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+}
+.band:not(.band--hero) > .band__inner{ width: 100%; }
+
 .band__inner{
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -1115,10 +1125,10 @@ a.contact__value:hover{ color: var(--green); }
   /* kisebb felső padding, hogy a nagyobb képek mellett a zöld vonal ne
      kerüljön lejjebb */
   --band-pad: clamp(28px, 3vw, 34px);
-  /* A kép nem lóg bele a zöldbe: a sávján belül marad, alatta rendes bézs
-     réssel – ugyanúgy, mint a lentebbi sávoknál. */
-  --band-overhang: 0px;
-  padding-block: var(--band-pad) clamp(30px, 3.2vw, 48px);
+  /* a kép csak kicsit nyúlik bele a zöld sávba – minden más (sorméret,
+     szöveg, zöld vonal helye) változatlan */
+  --band-overhang: clamp(24px, 3.2vw, 64px);
+  padding-block: var(--band-pad) 0;
 }
 /* a nyitósáv képe teljes egészében látszik: saját oldalarány, nincs vágás.
    A magasság fix (nem a szöveg hossza szabja meg), így minden oldalon
