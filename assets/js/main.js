@@ -11,12 +11,17 @@
   /* --- 1. Mobil menü --------------------------------------------------- */
   var burger = document.querySelector('.burger');
   var nav = document.querySelector('.nav');
+  var header = document.querySelector('.header');
 
   if (burger && nav) {
     var setMenu = function (open) {
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
       nav.classList.toggle('is-open', open);
       document.body.style.overflow = open && window.innerWidth <= 1080 ? 'hidden' : '';
+      /* Nyitáskor a fejléc azonnal visszanyílik. (Korábban ez csak görgetéskor
+         történt meg, de nyitott menünél a görgetés zárolva van, így a menü
+         összezárt fejléc alatt nyílt ki.) */
+      if (open && header) header.classList.remove('is-compact');
     };
 
     burger.addEventListener('click', function () {
@@ -37,7 +42,6 @@
   }
 
   /* --- 2. Fejléc: árnyék + összezárás görgetési irány szerint ---------- */
-  var header = document.querySelector('.header');
   if (header) {
     var lastY = window.scrollY;
     var headerTicking = false;
@@ -222,9 +226,10 @@
         var near = 1 - Math.min(1, Math.abs(offset));
         var away = 1 - near;
 
+        // mobilon nincs függőleges elmozdulás – csak méret és átlátszatlanság,
+        // különben függőlegesen is "el lehetne húzni" a sávot
         item.style.transform =
-          'translate3d(0,' + (away * 14).toFixed(1) + 'px,0)' +
-          ' scale(' + (0.96 + near * 0.04).toFixed(3) + ')';
+          'scale(' + (0.96 + near * 0.04).toFixed(3) + ')';
         item.style.opacity = (0.94 + near * 0.06).toFixed(3);
 
         var img = item.querySelector('img');

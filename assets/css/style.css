@@ -342,7 +342,8 @@ p:last-child{ margin-bottom: 0; }
      nyílik rés a fejléc és a lenyitott menü között */
   .nav{
     position: absolute;
-    top: 100%;
+    /* a fejléc hajszálvonala alatt kezdődjön, ne takarja el */
+    top: calc(100% + 1px);
     left: 0;
     right: 0;
     flex: none;
@@ -496,7 +497,7 @@ p:last-child{ margin-bottom: 0; }
 .features__leaf{
   position: absolute;
   top: 50%;
-  width: clamp(130px, 15vw, 250px);
+  width: clamp(170px, 20vw, 330px);
   opacity: 0;
   pointer-events: none;
   user-select: none;
@@ -506,15 +507,15 @@ p:last-child{ margin-bottom: 0; }
               transform 1.9s var(--ease);
 }
 .features__leaf--l{
-  left: -22px;
+  left: -40px;
   transform: translateY(-50%) rotate(-7deg) scale(.86);
 }
 .features__leaf--r{
-  right: -22px;
+  right: -40px;
   transform: translateY(-50%) scaleX(-1) rotate(-7deg) scale(.86);
 }
 .features.is-grown .features__leaf{
-  opacity: .26;
+  opacity: .3;
   clip-path: circle(150% at 6% 94%);
 }
 .features.is-grown .features__leaf--l{
@@ -558,12 +559,27 @@ p:last-child{ margin-bottom: 0; }
 @media (max-width: 1000px){
   .features__grid{ grid-template-columns: 1fr 1fr; gap: 34px 24px; }
   .feature:nth-child(3){ border-left: 0; }
+  /* egymás alá tördelt ikonoknál az ágak nem a középső szövegre esnek,
+     hanem a szakasz két átellénes sarkát keretezik */
+  .features__leaf{ width: clamp(130px, 36vw, 220px); top: auto; }
+  .features__leaf--l{
+    top: 0;
+    left: -34px;
+    transform: rotate(-7deg) scale(.86);
+  }
+  .features__leaf--r{
+    top: auto;
+    bottom: 0;
+    right: -34px;
+    transform: scaleX(-1) rotate(-7deg) scale(.86);
+  }
+  .features.is-grown .features__leaf{ opacity: .2; }
+  .features.is-grown .features__leaf--l{ transform: rotate(0deg) scale(1); }
+  .features.is-grown .features__leaf--r{ transform: scaleX(-1) rotate(0deg) scale(1); }
 }
 @media (max-width: 760px){
   .features__grid{ grid-template-columns: 1fr; gap: 34px; }
   .feature + .feature{ border-left: 0; border-top: 1px solid var(--line); padding-top: 34px; }
-  .features__leaf{ width: 110px; }
-  .features.is-grown .features__leaf{ opacity: .16; }
 }
 
 /* --- 9. Kétoszlopos szöveg + kép ----------------------------------------- */
@@ -803,6 +819,11 @@ p:last-child{ margin-bottom: 0; }
   }
   .hscroll__track{
     overflow-x: auto;
+    /* csak vízszintesen legyen mozgatható: függőlegesen ne lehessen
+       elhúzni a képeket – a függőleges görgetés az oldalé marad */
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     transform: none !important;
@@ -1094,10 +1115,10 @@ a.contact__value:hover{ color: var(--green); }
   /* kisebb felső padding, hogy a nagyobb képek mellett a zöld vonal ne
      kerüljön lejjebb */
   --band-pad: clamp(28px, 3vw, 34px);
-  /* a kép csak kicsit nyúlik bele a zöld sávba – minden más (sorméret,
-     szöveg, zöld vonal helye) változatlan */
-  --band-overhang: clamp(24px, 3.2vw, 64px);
-  padding-block: var(--band-pad) 0;
+  /* A kép nem lóg bele a zöldbe: a sávján belül marad, alatta rendes bézs
+     réssel – ugyanúgy, mint a lentebbi sávoknál. */
+  --band-overhang: 0px;
+  padding-block: var(--band-pad) clamp(30px, 3.2vw, 48px);
 }
 /* a nyitósáv képe teljes egészében látszik: saját oldalarány, nincs vágás.
    A magasság fix (nem a szöveg hossza szabja meg), így minden oldalon
@@ -1195,8 +1216,22 @@ a.contact__value:hover{ color: var(--green); }
 .band--green .textlink:hover{ border-color: var(--cream); }
 
 @media (max-width: 900px){
+  /* Kisebb képernyőn minden sáv legalább egy képernyőt kitölt, így a
+     zöld–bézs váltás ugyanúgy érezhető, mint asztali nézetben. A 100svh
+     a kisebbik viewport-magasság, így a böngésző sávjának eltűnésekor sem
+     ugrál. Hosszabb tartalomnál a sáv természetesen tovább nő. */
+  .band{
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+  }
+  .band > .band__inner{ width: 100%; }
   .band{ padding-block: clamp(46px, 9vw, 76px); }
-  .band--hero{ padding-block: clamp(46px, 9vw, 76px) 0; }
+  .band--hero{
+    min-height: 0;
+    align-items: flex-start;
+    padding-block: clamp(22px, 5vw, 36px) clamp(24px, 6vw, 40px);
+  }
   .band__inner,
   .band--hero .band__inner{ grid-template-columns: 1fr; gap: clamp(26px, 6vw, 36px); }
   .band--media-left .band__media{ order: 0; }
@@ -1210,7 +1245,9 @@ a.contact__value:hover{ color: var(--green); }
     aspect-ratio: 4 / 3;
   }
   .band--hero .band__copy{ padding-bottom: clamp(26px, 6vw, 36px); }
-  .band--hero .band__media{ margin-bottom: calc(-1 * clamp(20px, 5vw, 40px)); }
+  /* telefonon sem lóg bele a nyitókép a zöld sávba */
+  .band--hero .band__media{ margin-bottom: 0; }
+  .band--hero .band__media--top{ margin-top: 0; }
   .band__media img{ height: auto; min-height: 0; aspect-ratio: 4 / 3; }
 }
 
