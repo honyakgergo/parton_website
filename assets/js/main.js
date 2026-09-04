@@ -8,6 +8,9 @@
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Ahol a stíluslap a hamburger menüre vált (assets/css/style.css). */
+  var NAV_BREAK = 1180;
+
   /* --- 1. Mobil menü --------------------------------------------------- */
   var burger = document.querySelector('.burger');
   var nav = document.querySelector('.nav');
@@ -17,7 +20,7 @@
     var setMenu = function (open) {
       burger.setAttribute('aria-expanded', open ? 'true' : 'false');
       nav.classList.toggle('is-open', open);
-      document.body.style.overflow = open && window.innerWidth <= 1080 ? 'hidden' : '';
+      document.body.style.overflow = open && window.innerWidth <= NAV_BREAK ? 'hidden' : '';
       /* Nyitáskor a fejléc azonnal visszanyílik. (Korábban ez csak görgetéskor
          történt meg, de nyitott menünél a görgetés zárolva van, így a menü
          összezárt fejléc alatt nyílt ki.) */
@@ -37,7 +40,7 @@
     });
 
     window.addEventListener('resize', function () {
-      if (window.innerWidth > 1080) setMenu(false);
+      if (window.innerWidth > NAV_BREAK) setMenu(false);
     });
   }
 
@@ -106,7 +109,13 @@
             io.unobserve(entry.target);
           }
         });
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.12 });
+        /* threshold: 0 — szándékosan nem arányt kérünk. Az arányos küszöb a
+           blokk MAGASSÁGÁHOZ mérten számol, így egy magas blokk (pl. a
+           Kapcsolat elérhetőség-listája) rejtve maradhat akkor is, amikor
+           már látszik a képernyő alján: a 12%-a több száz pixel. A rootMargin
+           alsó -12%-a adja a "kissé jöjjön beljebb" hatást, magasságtól
+           függetlenül. */
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
 
       reveals.forEach(function (el) { io.observe(el); });
     }

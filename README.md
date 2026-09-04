@@ -12,12 +12,15 @@ parton_website/
 ├── index.html              Főoldal
 ├── rolunk.html             Rólunk – a családi történet
 ├── helyszin.html           Helyszín, teremelrendezések, felszereltség
+├── szallas.html            Szállás – 4 kétfős szoba, 8 fő részére
 ├── szolgaltatasok.html     Mit tartalmaz a helyszínbérlés
-├── rendezvenyek.html       5 alkalomtípus (horgonyokkal: #eskuvok stb.)
+├── rendezvenyek.html       6 alkalomtípus (horgonyokkal: #eskuvok stb.)
 ├── arak.html               Árak és ajánlatkérés
 ├── kapcsolat.html          Elérhetőségek
-├── adatkezeles.html        Jogi oldal (kitöltésre vár)
-├── aszf.html               Jogi oldal (kitöltésre vár)
+├── impresszum.html         Szolgáltatói adatok (Moltax Kft.)
+├── adatkezeles.html        Adatkezelési tájékoztató (11 szakasz)
+├── aszf.html               Általános foglalási és szolgáltatási feltételek (25 szakasz)
+├── workshop-feltetelek.html  Workshopok – foglalási és lemondási feltételek
 ├── 404.html                Hibaoldal
 ├── robots.txt
 ├── sitemap.xml
@@ -78,15 +81,56 @@ Visszafogottan, és `prefers-reduced-motion` esetén mind kikapcsol:
 Az `images/`, `instructions/` és `tools/` mappák feltöltése nem szükséges;
 ha ki akarod zárni őket, tegyél egy `.cfignore` fájlt a gyökérbe.
 
-## Mielőtt élesbe megy — cserélni kell
+## Alapadatok — egy helyen
 
-- [ ] **E-mail cím:** minden oldalon `info@parton.hu` szerepel placeholderként
-      (a leírásban „folyamatban”). Keresés és csere mind a 10 HTML fájlban.
-- [ ] **Domain:** a `canonical`, `og:image`, `og:url` és a `sitemap.xml`
-      `https://parton.hu/` címre mutat — a végleges domainre kell állítani.
-- [ ] **Adatkezelési tájékoztató és ÁSZF** szövege.
-- [ ] **Tópartról és a ház külsejéről készült fotók** — a szövegek erősen
-      épitenek a vízpartra, de jelenleg csak belső képek vannak.
+A `instructions/Parton impresszum.docx` az irányadó forrás. Amit onnan
+átvettünk, és ami több oldalon is szerepel:
+
+| Adat | Érték |
+|---|---|
+| Üzemeltető | Moltax Kft. |
+| Székhely / telephely | 2336 Dunavarsány, Nagyvarsányi utca 138/5. |
+| Adószám | 24760863-2-13 |
+| Cégjegyzékszám | 13-09-166951 |
+| E-mail | `info@partonrendezveny.hu` |
+| Telefon | +36 70 326 2692 |
+| Domain | `https://partonrendezveny.hu` |
+| Terembérlés | 170 000 Ft / rendezvény, plusz óradíj nélkül |
+| Előleg / kaució / takarítás | 30 000 Ft / 50 000 Ft / +20 000 Ft |
+| Befogadóképesség | beltéren 48 fő, kültéren 100 fő |
+| Szállás | 4 db kétfős szoba, összesen 8 fő |
+
+## Mielőtt élesbe megy — nyitott kérdések
+
+- [ ] **Házszám ellenőrzése:** az impresszum mind a négy helyen
+      `Nagyvarsányi utca 138/5.` címet ad (székhely *és* telephely), a korábbi
+      leírás viszont `138/57`-et. A weboldalon most a `138/5` szerepel. Ha a
+      rendezvényhelyszín valóban a `138/57`-es telken van, a `kapcsolat.html`
+      és a láblécek címét vissza kell írni — a Google Maps hivatkozás
+      hely-azonosítóval megy, azt nem érinti.
+- [ ] **Névhasználat:** az impresszum „Parton Rendezvény**ház**” néven
+      hivatkozik a helyszínre, a weboldal viszont mindenhol „Parton
+      Rendezvény**terem**”-et használ (logó, fejléc, oldalcímek, og-adatok).
+      Egyelőre a weboldal névhasználata maradt. Ha a hivatalos név a
+      Rendezvényház, azt egyben, minden oldalon cserélni kell.
+- [ ] **Ajánlatkérő űrlap:** a leírás űrlapot kért a Kapcsolat oldalra.
+      Jelenleg előre kitöltött `mailto:` gomb van helyette, mert a statikus
+      hostinghoz külső űrlapszolgáltató kell (pl. Formspree, Web3Forms,
+      Cloudflare Pages Functions). Döntés kérdése, melyik legyen.
+- [ ] **A ház külsejéről készült fotó** — a szállás és a helyszín szövege
+      épít a házra, de kültéri homlokzatkép még nincs.
+- [ ] **`favicon.ico` nincs verziókövetve.** A szkript a gyökérbe írja, de a
+      fájl untracked — minden oldal `href="favicon.ico"`-ként hivatkozik rá,
+      így élesben 404-et adna. Egy `git add favicon.ico` megoldja.
+- [ ] **A négy vonalas rajz PNG-je nagy** (`elrendezes-1..3`,
+      `terem-illusztracio`): együtt kb. 6,6 MB, és a Helyszín oldal
+      mindegyiket egyszerre tölti be. Az ok, hogy a `save_line_art()` a
+      szkennelt fehér háttér zaját is átlátszóságként viszi át, így az alfa és
+      az RGB is végig változó marad. A tus egyszínű, tehát elvileg ~80%
+      megtakarítás van benne (állandó RGB + tisztított alfa), de a próbáim
+      halványabb, hidegebb vonalakat adtak az eredetinél, ezért a rajzok
+      egyelőre változatlanok. Ha rámegyünk, a tusszín és az alfa-görbe
+      hangolását vizuális összevetéssel kell elvégezni.
 
 ## Tartalmi megjegyzések
 

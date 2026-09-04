@@ -135,6 +135,33 @@ p:last-child{ margin-bottom: 0; }
 .prose p{ color: var(--ink-soft); }
 .prose strong{ font-weight: 600; color: var(--ink); }
 
+/* Szövegközi hivatkozás: a bekezdésben maradjon látható, de ne kiabáljon.
+   A .textlink (nagybetűs, nyilas gomb-link) kivétel – annak saját formája van. */
+.prose a:not(.textlink):not(.btn),
+.note a,
+.dl dd a,
+.contact__value a{
+  color: var(--green-dark);
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: .2em;
+  transition: color .35s var(--ease), text-decoration-color .35s var(--ease);
+}
+.prose a:not(.textlink):not(.btn):hover,
+.note a:hover,
+.contact__value a:hover{
+  color: var(--green);
+  text-decoration-color: currentColor;
+}
+
+/* Zöld sávon a hivatkozás krémszínű, különben beleolvad a háttérbe. */
+.band--green .band__copy a:not(.textlink):not(.btn){
+  color: var(--cream);
+  text-decoration-color: rgba(255, 246, 224, .5);
+}
+.band--green .band__copy a:not(.textlink):not(.btn):hover{
+  text-decoration-color: currentColor;
+}
+
 .center{ text-align: center; }
 .center .divider{ margin-inline: auto; }
 
@@ -337,7 +364,24 @@ p:last-child{ margin-bottom: 0; }
 .burger[aria-expanded="true"] span:nth-child(2){ opacity: 0; }
 .burger[aria-expanded="true"] span:nth-child(3){ transform: translateY(-5px) rotate(-45deg); }
 
-@media (max-width: 1080px){
+/* A Szállás menüponttal nyolc link van a sorban. 1400px alatt a sor szűkösen
+   fér el, ezért ott a betűköz, a logó és az ajánlatkérés gomb egy fokkal
+   visszafogottabb – így 1180px-ig kifér, alatta jön a hamburger menü. */
+@media (min-width: 1181px) and (max-width: 1400px){
+  .header__inner{ gap: 22px; }
+  .brand__mark{ width: 78px; height: 78px; }
+  .brand__name{ font-size: 1.42rem; letter-spacing: .16em; }
+  .nav{ gap: 8px; }
+  .nav__link{ font-size: .72rem; letter-spacing: .1em; }
+  .nav__cta{ padding: .95em 1.3em; font-size: .7rem; margin-left: 6px; }
+  .header.is-compact .brand__mark{ width: 50px; height: 50px; }
+  .header.is-compact .brand__name{ font-size: 1.12rem; }
+  .header.is-compact .nav__cta{ padding: .8em 1.15em; }
+}
+
+/* A hamburger menü határa. A main.js ugyanezt az értéket használja
+   (NAV_BREAK), a kettőnek együtt kell mozognia. */
+@media (max-width: 1180px){
   /* a menü a fejléchez van kötve (top:100%), így összezárt állapotban sem
      nyílik rés a fejléc és a lenyitott menü között */
   .nav{
@@ -891,6 +935,14 @@ p:last-child{ margin-bottom: 0; }
   color: var(--ink-soft);
   margin: 0;
 }
+/* Rögzített hasábszám nagy kijelzőn: az auto-fit annyi hasábot nyit, amennyi
+   befér, és így könnyen egyedül marad egy tétel az utolsó sorban. Ahol a
+   tételek száma ismert (helyszín: 8, szállás: 6), inkább osztható rácsot
+   kérünk – a kisebb kijelzőkre a lentebbi 3, illetve 2 hasábos szabály él. */
+@media (min-width: 1001px){
+  .offers--4{ grid-template-columns: repeat(4, 1fr); }
+  .offers--3{ grid-template-columns: repeat(3, 1fr); }
+}
 
 /* --- 14. Teremelrendezések ---------------------------------------------- */
 .layouts{
@@ -1056,10 +1108,6 @@ p:last-child{ margin-bottom: 0; }
   transition: color .35s var(--ease);
 }
 a.contact__value:hover{ color: var(--green); }
-@media (min-width: 861px){
-  /* Kapcsolat: a kép balra kerül, mert a nyitósávban jobbra van */
-  .contact--flip > :last-child{ order: -1; }
-}
 
 /* --- 17c. Váltakozó hátterű sávok, átnyúló képpel --------------------- */
 /* Egyik sáv bézs, a következő mélyzöld, és a kép átnyúlik a két szín
@@ -1170,6 +1218,20 @@ a.contact__value:hover{ color: var(--green); }
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 .band--hero--media-big .band__media img{ height: clamp(320px, 26vw, 500px); }
+
+/* Nyitósáv kép nélkül (Kapcsolat): a szöveg egyetlen hasábban áll. A
+   kétoszlopos rács helyett egy oszlop, de a szöveg nem fut ki a sáv teljes
+   szélességére – az olvasható sorhossz marad. */
+.band--hero--solo .band__inner{ grid-template-columns: minmax(0, 1fr); }
+.band--hero--solo .band__copy{ max-width: 42rem; }
+
+/* Kép nélkül nincs mit kiegyensúlyozni a sáv alján, ezért a fotós
+   nyitósávok alsó levegője itt elmarad, és a következő szakasz is szűkebb
+   felső belsővel indul – így a lede után rögtön jön a tartalom.
+   A .band--hero-vel együtt írjuk, hogy a lentebbi mobil-szabályt is felülírja. */
+.band--hero.band--hero--solo{ padding-bottom: 0; }
+.band--hero.band--hero--solo .band__copy{ padding-bottom: 0; }
+.band--hero--solo + .section{ padding-top: clamp(34px, 4vw, 56px); }
 
 /* Két fekvő kép egymás alatt, ugyanazon bekezdés mellett. Szélességben
    korlátozva, mert ezek régi, kis felbontású családi fotók. */
@@ -1487,6 +1549,131 @@ a.contact__value:hover{ color: var(--green); }
   }
   .reveal{ opacity: 1; transform: none; }
 }
+
+/* --- 21b. Jogi és tájékoztató oldalak ---------------------------------- */
+/* Az impresszum, az adatkezelési tájékoztató és a feltételek hosszú,
+   számozott dokumentumok: itt a szakaszcímeknek és a listáknak is kell
+   forma, különben a szöveg egyetlen szürke tömbként olvasódik. */
+.prose h2{
+  font-size: clamp(1.4rem, 1.9vw, 1.8rem);
+  margin-bottom: .6em;
+}
+.prose > * + h2{ margin-top: 2.6em; }
+
+.prose ol{
+  margin: 0 0 1.25em;
+  padding-left: 1.5em;
+  color: var(--ink-soft);
+}
+.prose ol > li{ margin-bottom: .5em; }
+.prose ol > li::marker{ color: var(--green); }
+
+/* Felsorolás: ugyanaz a vékony körös jelölő, mint az árlistában */
+.prose ul{
+  list-style: none;
+  margin: 0 0 1.25em;
+  padding: 0;
+  color: var(--ink-soft);
+}
+.prose ul > li{
+  position: relative;
+  padding-left: 1.5em;
+  margin-bottom: .5em;
+}
+.prose ul > li::before{
+  content: "";
+  position: absolute;
+  left: .25em;
+  top: .82em;
+  width: 5px; height: 5px;
+  border: 1px solid var(--green);
+  border-radius: 50%;
+}
+
+/* Hatályosság dátuma a jogi oldalak élén */
+.legal-date{
+  font-size: .68rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 2.6em;
+}
+
+/* Szakaszra ugró horgony: a ragadó fejléc alá ne csússzon a cím */
+.legal-section{ scroll-margin-top: 140px; }
+
+/* Adatsorok (impresszum): kicsi címke, alatta az érték, hajszálvonallal */
+.dl{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(22px, 2.6vw, 34px) clamp(28px, 4vw, 64px);
+  margin: 0;
+}
+.dl > div{
+  padding-top: clamp(14px, 1.4vw, 20px);
+  border-top: 1px solid var(--line-strong);
+}
+.dl dt{
+  font-family: var(--body);
+  font-size: .6rem;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: .6em;
+}
+.dl dd{
+  font-family: var(--display);
+  font-size: 1.14rem;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+.dl dd a{ text-decoration: none; transition: color .35s var(--ease); }
+.dl dd a:hover{ color: var(--green); }
+
+/* Tartalomjegyzék a hosszabb feltételekhez. Szándékosan a .prose blokkon
+   KÍVÜL áll, hogy a fenti lista-szabályok ne írják át. */
+.toc{
+  margin-bottom: clamp(34px, 4vw, 54px);
+  padding: clamp(22px, 2.6vw, 32px) clamp(24px, 3vw, 40px);
+  background: var(--paper);
+  border: 1px solid var(--line);
+}
+.toc__title{
+  font-family: var(--body);
+  font-size: .62rem;
+  font-weight: 600;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 0 0 1.3em;
+}
+.toc ol{
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 9px clamp(20px, 3vw, 44px);
+  counter-reset: toc;
+}
+.toc li{ counter-increment: toc; }
+.toc a{
+  display: flex;
+  gap: .7em;
+  font-size: .85rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color .35s var(--ease);
+}
+.toc a::before{
+  content: counter(toc) ".";
+  flex: none;
+  color: var(--green);
+  font-variant-numeric: tabular-nums;
+}
+.toc a:hover{ color: var(--green-dark); }
 
 /* --- 22. Nyomtatás ----------------------------------------------------- */
 @media print{

@@ -51,6 +51,7 @@ PHOTOS = {
     # --- Szolgáltatások ---
     "DSC_6570.jpg": ("szolg-hero",    3 / 2, LARGE, 1200),
     "DSC_6594.jpg": ("szolg-1",       3 / 2, LARGE, 1200),
+    "DSC_5446.jpg": ("szolg-2",       3 / 2, LARGE, 1200),   # kültéri sütés-főzés
 
     # --- Rendezvények ---
     "DSC_6405.jpg": ("rend-hero",     2 / 3, LARGE, 1200),   # álló kép
@@ -63,11 +64,23 @@ PHOTOS = {
     # --- Árak ---
     "DSC_6356.jpg": ("arak-hero",     3 / 2, LARGE, 1200),
 
-    # --- Még nem érkezett meg (ha bekerül az images/ mappába, itt aktiválható) ---
     "DSC_6748.jpg": ("rolunk-hero",   3 / 2, LARGE, 1200),
     "DSC_6757.jpg": ("rend-6",        3 / 2, LARGE, 1200),   # Kültéri rendezvények
-    "DSC_6799.jpg": ("arak-1",        3 / 2, LARGE, 1200),   # Mielőtt döntesz
-    "DSC_5409.jpg": ("kapcsolat-1",   3 / 2, LARGE, 1200),
+    "DSC_5400.jpg": ("arak-1",        3 / 2, LARGE, 1200),   # Mielőtt döntesz
+
+    # --- Szállás ---
+    # A két szobafotó telefonnal készült: az egyik EXIF-orientációval álló,
+    # ezért a beolvasásnál kötelező az exif_transpose (lásd load_photo).
+    "IMG_9274.jpeg": ("szallas-hero", 4 / 3, LARGE, 1200),   # szoba két ággyal
+    "IMG_9276.jpeg": ("szallas-szoba", 3 / 4, SMALL, 900),   # ágy az ablak mellett
+    "DSC_6708.jpg": ("szallas-1",     3 / 2, LARGE, 1200),   # a ház belső tere
+    "DSC_6697.jpg": ("szallas-2",     3 / 2, LARGE, 1200),   # a konyha
+    "DSC_1517 K.jpg": ("szallas-3",   3 / 2, LARGE, 1200),   # hajnal a tavon
+
+    # --- Kapcsolat ---
+    # A Kapcsolat nyitósávjában szándékosan nincs fotó, csak a szöveg; az
+    # egyetlen kép a lentebbi álló csokor-felvétel.
+    "DSC_6806.jpg": ("kapcsolat-1",   3 / 4, SMALL,  900),   # csokor a tópartra néző padon
     # régi családi fotók: csak 960px szélesek, ezért kisebb lépcsőt kapnak
     "1.jpg":        ("rolunk-story-a", 3 / 2, ARCHIVE, 800),
     "3.jpg":        ("rolunk-story-b", 3 / 2, ARCHIVE, 800),
@@ -114,8 +127,18 @@ def crop_to_ratio(im: Image.Image, ratio: float) -> Image.Image:
     return im.crop((0, top, w, top + new_h))
 
 
+def load_photo(path: Path) -> Image.Image:
+    """Megnyitás az EXIF-orientáció alkalmazásával.
+
+    A telefonnal készült felvételek (IMG_*) álló képei fekvő pixelrácsban
+    érkeznek, és csak az EXIF Orientation címke fordítja el őket. Enélkül a
+    kimenet oldalra dőlve jelenne meg a weboldalon.
+    """
+    return ImageOps.exif_transpose(Image.open(path)).convert("RGB")
+
+
 def save_photo(path: Path, name: str, ratio: float, widths: list, jpg_width: int) -> None:
-    im = Image.open(path).convert("RGB")
+    im = load_photo(path)
     im = crop_to_ratio(im, ratio)
     source_w = im.size[0]
 
@@ -225,7 +248,7 @@ def main() -> None:
     hero = SRC / "DSC_6660.jpg"
     if hero.exists():
         print("Megosztási kép:")
-        im = crop_to_ratio(Image.open(hero).convert("RGB"), 1200 / 630)
+        im = crop_to_ratio(load_photo(hero), 1200 / 630)
         im.resize((1200, 630), Image.LANCZOS).save(
             OUT / "og-parton.jpg", "JPEG", quality=88, optimize=True, progressive=True
         )
