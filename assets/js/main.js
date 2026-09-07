@@ -96,6 +96,23 @@
     }
   }
 
+  /* --- 2c. "Szél": az ág csak görgetés közben leng ---------------------- */
+  /* A lengés CSS-animáció, itt csak a play-state kapcsolóját adjuk meg:
+     amíg görgetés van (fel vagy le), fut; ha megáll, ott áll meg, ahol
+     éppen tart – nem ugrik vissza. */
+  if (!reduced) {
+    var breezeRoot = document.documentElement;
+    var breezeTimer = null;
+
+    window.addEventListener('scroll', function () {
+      breezeRoot.classList.add('is-scrolling');
+      window.clearTimeout(breezeTimer);
+      breezeTimer = window.setTimeout(function () {
+        breezeRoot.classList.remove('is-scrolling');
+      }, 260);
+    }, { passive: true });
+  }
+
   /* --- 3. Megjelenítő animáció ---------------------------------------- */
   var reveals = document.querySelectorAll('.reveal');
 
@@ -335,12 +352,74 @@
   var pen = document.querySelector('.callout__script');
 
   if (pen) {
+    /* A maszk 7%-os átmenettel dolgozik, ezért a toll -7%-tól 107%-ig fut:
+       így a sor az elején teljesen rejtett, a végén teljesen kiírt. */
+    var PEN_HIDDEN = '-7%';
+    var PEN_FULL = '110%';
+    var penText = pen.textContent.replace(/\s+/g, ' ').trim();
+    var penLines = [];
+    var penState = 'idle';   // idle | running | done
+
+    /* A mondatot a saját tördelése szerint sorokra vágjuk: minden szót
+       külön elemben megmérünk, és ami egy magasságba esik, egy sor lesz.
+       Telefonon így a "kezdődnek." külön sor lesz, külön maszkkal – és
+       csak akkor indul el, amikor az előző sor már le van írva. */
+    var buildLines = function () {
+      var words = penText.split(' ');
+      var probes = [];
+
+      pen.textContent = '';
+      words.forEach(function (word, i) {
+        var probe = document.createElement('span');
+        probe.textContent = word;
+        pen.appendChild(probe);
+        if (i < words.length - 1) pen.appendChild(document.createTextNode(' '));
+        probes.push(probe);
+      });
+
+      var groups = [];
+      var lineTop = null;
+      probes.forEach(function (probe) {
+        var top = probe.getBoundingClientRect().top;
+        if (lineTop === null || Math.abs(top - lineTop) > 2) {
+          groups.push([]);
+          lineTop = top;
+        }
+        groups[groups.length - 1].push(probe.textContent);
+      });
+
+      pen.textContent = '';
+      penLines = groups.map(function (group) {
+        var line = document.createElement('span');
+        line.className = 'callout__line';
+        line.textContent = group.join(' ');
+        pen.appendChild(line);
+        return line;
+      });
+    };
+
+    var setPen = function (value) {
+      penLines.forEach(function (line) { line.style.setProperty('--pen', value); });
+    };
+
+    buildLines();
+
     if (reduced || !('IntersectionObserver' in window)) {
-      pen.style.setProperty('--pen', '110%');
+      penState = 'done';
+      setPen(PEN_FULL);
     } else {
-      pen.style.setProperty('--pen', '0%');
+      setPen(PEN_HIDDEN);
 
       var write = function () {
+        // a betűtípus betöltése után változhat a tördelés
+        buildLines();
+        setPen(PEN_HIDDEN);
+        penState = 'running';
+
+        var widths = penLines.map(function (line) {
+          return line.getBoundingClientRect().width || 1;
+        });
+        var total = widths.reduce(function (a, b) { return a + b; }, 0);
         var start = null;
         var duration = 3600;
 
@@ -351,8 +430,21 @@
              és csak a végén lassul le. (A korábbi ease-in-out az első egy
              másodpercben alig haladt – ezért tűnt úgy, hogy késik.) */
           var eased = Math.sin(t * Math.PI / 2);
-          pen.style.setProperty('--pen', (eased * 110).toFixed(2) + '%');
+          /* A megtett utat a sorok szélessége szerint osztjuk szét: a toll
+             egyenletes tempóban olvassa végig a sorokat, és a következő sor
+             csak az előző befejezése után indul. */
+          var travelled = eased * total;
+          var before = 0;
+
+          penLines.forEach(function (line, i) {
+            var frac = (travelled - before) / widths[i];
+            frac = frac < 0 ? 0 : (frac > 1 ? 1 : frac);
+            line.style.setProperty('--pen', (frac * 114 - 7).toFixed(2) + '%');
+            before += widths[i];
+          });
+
           if (t < 1) window.requestAnimationFrame(step);
+          else penState = 'done';
         };
 
         window.requestAnimationFrame(step);
@@ -373,6 +465,19 @@
       }, { threshold: 0, rootMargin: '0px 0px -12% 0px' });
 
       penIo.observe(pen);
+
+      /* Átméretezésnél (pl. elfordított telefon) újra kell tördelni – de
+         csak akkor, ha épp nem fut az animáció. */
+      var penResizeTimer = null;
+      window.addEventListener('resize', function () {
+        if (penState === 'running') return;
+        window.clearTimeout(penResizeTimer);
+        penResizeTimer = window.setTimeout(function () {
+          if (penState === 'running') return;
+          buildLines();
+          setPen(penState === 'done' ? PEN_FULL : PEN_HIDDEN);
+        }, 150);
+      });
     }
   }
 

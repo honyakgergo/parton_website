@@ -127,6 +127,18 @@ p:last-child{ margin-bottom: 0; }
   line-height: 1.8;
 }
 
+/* Záró gondolat a szövegtörzs végén: a címekkel egyező (Cormorant)
+   betűtípussal, kicsit nagyobb fokozatban – a talpas betű kisebb
+   x-magassága miatt a törzsmérettel apróbbnak tűnne. */
+.closer{
+  font-family: var(--display);
+  font-size: clamp(1.24rem, 1.7vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.closer strong{ font-weight: 600; }   /* 700-as vágat nincs betöltve */
+
 .prose > * + h3{ margin-top: 2.2em; }
 .prose h3{
   font-size: clamp(1.28rem, 1.6vw, 1.6rem);
@@ -542,6 +554,8 @@ p:last-child{ margin-bottom: 0; }
   position: absolute;
   top: 50%;
   width: clamp(130px, 15vw, 250px);
+  display: block;
+  line-height: 0;
   opacity: 0;
   pointer-events: none;
   user-select: none;
@@ -549,6 +563,42 @@ p:last-child{ margin-bottom: 0; }
   clip-path: circle(0% at 6% 94%);
   transition: clip-path 1.9s var(--ease), opacity 1.2s var(--ease),
               transform 1.9s var(--ease);
+}
+
+/* Szellő: az ág a szára tövéből ring. A mozgás a belső képen van, hogy ne
+   ütközzön a külső elem kibontakozó transformjával. */
+@keyframes leafSway{
+  0%   { transform: rotate(0deg); }
+  20%  { transform: rotate(5deg) translate(.8%, -1.6%); }
+  40%  { transform: rotate(-3deg) translate(-.6%, 1%); }
+  60%  { transform: rotate(3.4deg) translate(.5%, -1.1%); }
+  80%  { transform: rotate(-1.6deg) translate(-.3%, .5%); }
+  100% { transform: rotate(0deg); }
+}
+.features__leaf__img{
+  display: block;
+  width: 100%;
+  height: auto;
+  /* a tövénél a pivot – ugyanott, ahonnan a növekedés indul */
+  transform-origin: 6% 94%;
+  will-change: transform;
+}
+.features.is-grown .features__leaf__img{
+  /* Nincs késleltetés: a lengés csak görgetés közben fut, és a delay is
+     csak akkor telne – így sokáig nem történt volna semmi. */
+  animation: leafSway 3.6s ease-in-out infinite;
+  /* alapból áll: csak görgetés közben mozdul (lásd .is-scrolling) */
+  animation-play-state: paused;
+}
+.features.is-grown .features__leaf--r .features__leaf__img{
+  /* a két ág ne egyszerre lengjen */
+  animation-duration: 4.6s;
+  animation-delay: -1.4s;   /* fázisban eltolva, de nem várakozva */
+}
+/* a "szelet" a görgetés csinálja: amíg van görgetés, fut az animáció,
+   megállásnál ott áll meg, ahol éppen tart */
+.is-scrolling .features.is-grown .features__leaf__img{
+  animation-play-state: running;
 }
 .features__leaf--l{
   left: -22px;
@@ -1157,15 +1207,28 @@ a.contact__value:hover{ color: var(--green); }
    (cím balra, bekezdések jobbra), és a sáv csak a tartalma magasságát veszi
    fel – így nem marad üres félhasáb a szöveg mellett, sem üres képernyő. */
 .band--text:not(.band--hero){ min-height: 0; }
+/* Ugyanaz az oszloposztás, mint a fölötte lévő nyitósávban
+   (.band--hero--media-big): azonos .wrap és azonos gap mellett így a jobb
+   hasáb szövege pontosan ott kezdődik, ahol a fölötte lévő kép bal széle. */
 .band--text .band__inner{
-  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
   align-items: start;
 }
-.band--text .band__copy--head{ max-width: 24ch; }
+.band--text .band__copy--head{
+  max-width: 24ch;
+  /* A cím ne tapadjon a sáv bal szélére, hanem beljebb, a sáv belseje felé
+     kezdődjön – így kevésbé esik szét a nagy zöld felület. Margóval, nem
+     paddinggal: a border-box miatt a padding a 24ch-es sorhosszt szűkítené. */
+  margin-inline-start: clamp(16px, 3.2vw, 64px);
+}
 .band--text .band__copy--head .divider{ margin-bottom: 0; }
 @media (max-width: 900px){
   .band--text .band__inner{ grid-template-columns: 1fr; }
-  .band--text .band__copy--head{ max-width: none; }
+  .band--text .band__copy--head{
+    max-width: none;
+    /* egymás alatt a behúzás zavaró lenne */
+    margin-inline-start: 0;
+  }
 }
 
 .band__copy{
@@ -1518,15 +1581,30 @@ a.contact__value:hover{ color: var(--green); }
 .callout__script{
   font-family: var(--script);
   font-size: clamp(2.6rem, 6.5vw, 5.6rem);
-  /* A maszk az elem határoló dobozához van vágva, ezért a sormárető legyen
-     nagyobb, mint a betűk tényleges magassága – különben az Allison hosszú
-     alsó szárai (g, j, p) kilógnak a maszkból és letörődnek. */
   line-height: 1.5;
   padding-block: .08em .2em;
-  /* az 1.5-es sorméret kell a maszknak (különben letöri az alsó szárakat),
-     de a felül keletkező felesleget negatív marginóval vissza is vesszük */
   margin: -.2em 0 .16em;
   color: var(--green-dark);
+}
+/* A kézírást a JS sorokra bontja, és minden sor külön maszkot kap: így a
+   második sor csak akkor kezd el megjelenni, amikor az első már le van írva
+   – ahogy az ember olvas. JS nélkül nincsenek sorok, és a szöveg maszk
+   nélkül, egyszerűen látszik. */
+.callout__line{
+  display: block;
+  /* csak a szöveg szélességét kapja meg, így a középre zárt sorok előtti
+     üres helyen nem "vesztegeti" az idejét a toll */
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  /* A maszk a padding-boxra van vágva, ezért kell egy kis ráhagyás –
+     különben az Allison hosszú alsó szárai (g, j, p) letörődnek. A negatív
+     margó ugyanennyit visszavesz, így a sortávolság nem változik. */
+  padding-block: .24em;
+  margin-block: -.24em;
+  /* oldalt is kell egy hajszál ráhagyás: a dőlt kézírás betűi kilóghatnak
+     a sor dobozából, és a maszk ott már nem festene */
+  padding-inline: .18em;
   /* a JS balról jobbra "megírja" — alapból teljesen látszik */
   -webkit-mask-image: linear-gradient(90deg, #000 var(--pen, 110%),
                                        rgba(0,0,0,0) calc(var(--pen, 110%) + 7%));
@@ -2102,6 +2180,18 @@ a.contact__value:hover{ color: var(--green); }
   .callout{ padding-block: clamp(56px, 14vw, 96px); }
   .price{ padding: clamp(26px, 6vw, 40px); }
   .hscroll__head{ padding-inline: var(--gutter); }
+
+  /* Telefonon a kézírás több sorba tördelődik – ott a nagy sortávolság
+     széteső, ezért szorosabb. (A maszk ráhagyása a .callout__line
+     paddingjában van, nem a sorméretben, így ez nem tör le semmit.) */
+  .callout__script{
+    line-height: 1.22;
+    margin-block: 0 .16em;
+  }
+  .callout__line{
+    padding-block: .3em;
+    margin-block: -.3em;
+  }
 }
 
 /* Lábléc telefonon: rövidebb, ne legyen egy teljes oldal. */
