@@ -1026,15 +1026,28 @@ p:last-child{ margin-bottom: 0; }
   gap: clamp(28px, 4vw, 64px);
   align-items: center;
   padding: clamp(32px, 4.5vw, 64px);
-  background: var(--paper);
-  border: 1px solid var(--line);
+  /* Ez a lap legfontosabb eleme, ezért a zöld sávokkal egy nyelvet beszél:
+     zöld alap, krém tipográfia. A .price csak az Árak oldalon szerepel, így
+     nem kell hozzá modifier. */
+  background: var(--green-dark);
+  border: 0;
 }
+/* Krém tipográfia a zöld alapon. A pontos árnyalatok ugyanazok, mint a
+   .band--green blokkban, hogy a két zöld felület egyformán viselkedjen.
+   (Az árat és a mértékegységét lentebb, a saját szabályában színezzük: ott
+   ugyanez a specificitás, viszont az áll később a fájlban.) */
+.price h2{ color: var(--cream); }
+.price__intro{
+  max-width: 44ch;
+  color: rgba(255, 246, 224, .86);
+}
+.price .kicker{ color: rgba(255, 246, 224, .78); }
 .price__amount{
   font-family: var(--display);
   font-size: clamp(2.2rem, 4.4vw, 3.4rem);
   font-weight: 400;
   line-height: 1;
-  color: var(--green-dark);
+  color: var(--cream);
   margin: 0 0 .35em;
 }
 .price__amount small{
@@ -1045,7 +1058,7 @@ p:last-child{ margin-bottom: 0; }
   font-weight: 400;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: rgba(255, 246, 224, .72);
 }
 .price__list{
   list-style: none;
@@ -1059,14 +1072,14 @@ p:last-child{ margin-bottom: 0; }
   align-items: baseline;
   gap: 12px;
   font-size: .88rem;
-  color: var(--ink-soft);
+  color: rgba(255, 246, 224, .86);
 }
 .price__list li::before{
   content: "";
   flex: none;
   width: 5px; height: 5px;
   margin-top: .55em;
-  border: 1px solid var(--green);
+  border: 1px solid rgba(255, 246, 224, .6);
   border-radius: 50%;
 }
 @media (max-width: 820px){ .price{ grid-template-columns: 1fr; } }
@@ -1235,11 +1248,107 @@ a.contact__value:hover{ color: var(--green); }
    marad a kép alatt a következő szakasz előtt */
 .band--hero--compact{ padding-block: var(--band-pad) clamp(28px, 3vw, 44px); }
 .band--hero--compact .band__inner{ min-height: 0; }
-/* nagyobb kép a nyitósávban: fele-fele osztás */
-.band--hero--media-big .band__inner{
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+/* Nagyobb nyitókép (Rólunk, Helyszín, Szállás, Rendezvények): szélesebb
+   képoszlop, és a fotó a viewport jobb széléig kifut. A .band--hero-vel együtt
+   írjuk, mert a lentebbi .band--hero .band__inner szabályt is felül kell
+   írnia. */
+.band--hero.band--hero--media-big .band__inner{
+  grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
 }
-.band--hero--media-big .band__media img{ height: clamp(320px, 26vw, 500px); }
+.band--hero--media-big .band__media{
+  margin-right: calc(-1 * max(0px, (100vw - var(--wrap)) / 2));
+}
+/* A keret arányát FIXEN mi adjuk meg, nem a fotó hozza magával: így minden
+   nyitókép ugyanolyan méretű és ugyanott áll, függetlenül attól, hogy az
+   eredeti 3:2 (Rólunk, Helyszín) vagy 4:3 (Szállás). A magasságot tehát
+   csak az oszlopszélesség szabja meg. Ezért cover: a 4:3-as fotóból felül-
+   alul vágunk annyit, hogy a 3:2-es keretet kitöltse.
+   A kép alulra igazodik (.band--hero .band__media align-self: end), és a
+   negatív alsó margó miatt pontosan --band-overhang mértékben csúszik bele a
+   következő zöld sávba. */
+.band--hero--media-big .band__media img{
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+/* Rendezvények: az eredeti fotó álló (2:3), itt fix 3:2-es kivágásban
+   mutatjuk. A kivágás nem középen áll, hanem harmadával feljebb toljuk, így a
+   két megterített asztal és a székek kerülnek a képbe, nem a fotó felső
+   harmadát kitöltő üres mennyezet és fal.
+
+   A méretezés a fenti --media-big szabályból jön, itt csak a kivágás helyét
+   toljuk el. */
+.band--hero .band__media--crop img{ object-position: center 83%; }
+/* Szállás: az eredeti 4:3, a 3:2-es keret tehát 100px-t vág a 900-ból –
+   pont annyit, amennyit a fakazettás mennyezet elfoglal a kép tetején. Ezért
+   nem középre, hanem ALULRA igazítjuk a kivágást: a mennyezet így teljesen
+   kimarad, és az ágyak alja is beljebb kerül a képbe. */
+.band--hero .band__media--crop-bottom img{ object-position: center bottom; }
+
+/* Zöld nyitósáv (Szolgáltatások, Árak). Ezen a két oldalon a nyitókép melletti
+   nagy krém felület túl bézses és üres volt, a meleg tónusú fotó pedig a krém
+   alapon még melegebbnek látszott. Ezért itt maga a sáv zöld: hideg alap fogja
+   körbe a fotót, a tipográfia krémre fordul. A fejléc krém marad – nem a
+   hajszálvonal, hanem a színváltás választja el a sávtól.
+   A --media-big-gel együtt használjuk: a nagy, jobbra kifutó fotó tölti ki azt
+   a helyet, ami eddig üresen állt. */
+.band--hero.band--hero--green{ background: var(--green-dark); }
+.band--hero--green .band__copy,
+.band--hero--green .band__copy p{ color: rgba(255, 246, 224, .88); }
+.band--hero--green .band__copy h1{ color: var(--cream); }
+.band--hero--green .band__copy .lede{ color: rgba(255, 246, 224, .9); }
+.band--hero--green .kicker{ color: rgba(255, 246, 224, .72); }
+
+/* Kapcsolat nyitósáv. Négy dolgot kezel:
+   1) A nyitó nézetben a két gombnak is látszania kell, ezért itt szorosabb a
+      szöveg vertikális ritmusa (kb. 55px-t nyerünk vissza). A gombok helyét
+      csak a szövegoszlop saját magassága szabja meg, mert a .band__copy
+      felülre igazított – a kép magassága tehát nem tolja lejjebb őket.
+   2) A kép felső éle a szöveggel egy vonalban indul: a margin-top ugyanaz az
+      érték, mint a .band__copy padding-top-ja.
+   3) A kép kitölti a képoszlopot és a viewport jobb széléig kifut – eddig egy
+      keskeny álló fotó állt jobbra tolva, és nagy üres krém felület maradt a
+      szöveg és a kép között.
+   4) A kép egészben belefér a nyitó nézetbe – a magasságát lentebb a
+      viewportból számoljuk. */
+/* Egy változóban tartjuk a felső belső teret, mert két helyen kell
+   pontosan ugyanaz: a szöveg padding-top-ja és a kép margin-top-ja – ezen
+   áll a két elem felső élének az igazítása. */
+.band--hero--contact{ --contact-top: clamp(16px, 2vw, 32px); }
+/* A .band--hero-vel együtt írjuk: a .band--hero .band__copy szabály
+   lentebb áll a fájlban, ugyanezzel a specificitással. */
+.band--hero.band--hero--contact .band__copy{
+  padding-top: var(--contact-top);
+  padding-bottom: clamp(16px, 2vw, 28px);
+}
+.band--hero--contact .contact__list{ gap: 18px; }
+.band--hero--contact .band__copy .contact__list{
+  margin-top: clamp(14px, 1.8vw, 24px);
+  margin-bottom: clamp(16px, 1.8vw, 24px);
+}
+.band--hero--contact .band__media{
+  align-self: start;
+  margin-top: var(--contact-top);
+  margin-bottom: 0;
+  margin-right: calc(-1 * max(0px, (100vw - var(--wrap)) / 2));
+}
+/* A kép egészben beleér a nyitó nézetbe: a magasságát a viewportból
+   számoljuk, nem az arányából. Levonjuk a fejlécet (.header__inner
+   min-height 124px + 1px hajszálvonal), a sáv felső belső terét és a kép
+   saját felső margóját, végül hagyunk egy kis levegőt a hajtás előtt.
+   A 46vw felső korlát a nagyon magas ablakokban tartja kordában a méretet,
+   a 320px alsó korlát pedig a nagyon alacsonyakban akadályozza meg, hogy
+   fekvő csíkká lapuljon. Szélességben a képoszlopot kitölti, a 3:4-es
+   eredetiből tehát a cover vág – a csokor középen van, benne marad. */
+.band--hero--contact .band__media img{
+  width: 100%;
+  height: max(320px, min(
+    calc(100svh - 125px - var(--band-pad) - var(--contact-top) - 28px),
+    46vw));
+  aspect-ratio: auto;
+  object-fit: cover;
+}
 
 /* Nyitósáv kép nélkül (Kapcsolat): a szöveg egyetlen hasábban áll. A
    kétoszlopos rács helyett egy oszlop, de a szöveg nem fut ki a sáv teljes
@@ -1294,6 +1403,11 @@ a.contact__value:hover{ color: var(--green); }
   margin-bottom: 22px;
   object-fit: contain;
 }
+/* Az ikon és a rendezvény neve egy .band__head-ben ül, hogy telefonon egy
+   sorba kerülhessenek. Asztali nézetben viszont maradjon minden úgy, ahogy
+   volt: a cím ott a .prose > * + h2 szabálytól kapta a nagy felső margót,
+   ami a beágyazás után már nem illeszkedik rá, ezért itt pótoljuk. */
+.band__head .h-block{ margin-top: 2.6em; }
 .band--green img.band__icon{ filter: brightness(0) invert(1); opacity: .9; }
 .band--green svg.band__icon g{ stroke: var(--cream); }
 
@@ -1328,6 +1442,12 @@ a.contact__value:hover{ color: var(--green); }
   }
   .band__inner,
   .band--hero .band__inner{ grid-template-columns: 1fr; gap: clamp(26px, 6vw, 36px); }
+  /* A fenti sor csak két class-os, a .band--hero.band--hero--media-big
+     .band__inner viszont három – és a media query nem ad specificitást.
+     Ezért itt ugyanazzal a három class-szal kell egy hasábra bontani,
+     különben telefonon is kéthasábos marad a nyitósáv: a szöveg pár szó
+     széles csíkba szorul, a kép meg a fél oszlopra zsugorodik. */
+  .band--hero.band--hero--media-big .band__inner{ grid-template-columns: 1fr; }
   .band--media-left .band__media{ order: 0; }
   .band__copy{ max-width: none; }
   .band--hero .band__inner{ min-height: 0; }
@@ -1338,10 +1458,32 @@ a.contact__value:hover{ color: var(--green); }
     width: 100%;
     aspect-ratio: 4 / 3;
   }
+  .band--hero--media-big .band__media{ margin-right: 0; }
+  /* Telefonon nem kell külön arány: a nyitóképek is a fenti 4:3-as keretet
+     kapják, mint a többi sáv képe – ez a teljes szövegszélességben jóval
+     nagyobb kép, mint a korábbi 3:2-es csík. A vágást a cover végzi, a
+     --crop és a --crop-bottom object-position-je érvényben marad. */
   .band--hero .band__copy{ padding-bottom: clamp(26px, 6vw, 36px); }
+  /* a Kapcsolat szűkebb alsó belső tere csak a kéthasábos nézetben kell –
+     a fenti sort a három class-os szabálya különben itt is felülírná */
+  .band--hero.band--hero--contact .band__copy{ padding-bottom: clamp(26px, 6vw, 36px); }
   /* telefonon sem lóg bele a nyitókép a zöld sávba */
   .band--hero .band__media{ margin-bottom: 0; }
   .band--hero .band__media--top{ margin-top: 0; }
+  /* Telefonon az ikon a rendezvény neve MELLÉ kerül, nem fölé. Így elmarad
+     az ikon alatti margó és a cím 2.6em-es felső margója is – korábban
+     ketten együtt kb. 85px üres helyet hagytak az ikon és a cím között. */
+  .band__head{
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 3vw, 16px);
+  }
+  .band__head .band__icon{
+    flex: none;
+    width: 38px; height: 38px;
+    margin-bottom: 0;
+  }
+  .band__head .h-block{ margin-top: 0; }
   .band__media img{ height: auto; min-height: 0; aspect-ratio: 4 / 3; }
   /* az álló nyitókép telefonon is a saját arányát tartja, különben széles
      üres sávok maradnának mellette */
