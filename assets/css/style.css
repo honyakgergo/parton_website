@@ -1140,6 +1140,21 @@ a.contact__value:hover{ color: var(--green); }
 }
 .band--media-left .band__media{ order: -1; }
 
+/* Kép nélküli sáv: a szöveg két hasábban tölti ki a teljes szélességet
+   (cím balra, bekezdések jobbra), és a sáv csak a tartalma magasságát veszi
+   fel – így nem marad üres félhasáb a szöveg mellett, sem üres képernyő. */
+.band--text:not(.band--hero){ min-height: 0; }
+.band--text .band__inner{
+  grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+  align-items: start;
+}
+.band--text .band__copy--head{ max-width: 24ch; }
+.band--text .band__copy--head .divider{ margin-bottom: 0; }
+@media (max-width: 900px){
+  .band--text .band__inner{ grid-template-columns: 1fr; }
+  .band--text .band__copy--head{ max-width: none; }
+}
+
 .band__copy{
   max-width: 52ch;
 }
