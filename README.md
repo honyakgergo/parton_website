@@ -16,6 +16,7 @@ parton_website/
 ├── szolgaltatasok.html     Mit tartalmaz a helyszínbérlés
 ├── rendezvenyek.html       6 alkalomtípus (horgonyokkal: #eskuvok stb.)
 ├── arak.html               Árak és ajánlatkérés
+├── galeria.html            Galéria – 16 kép mozaikban, nagy nézettel
 ├── kapcsolat.html          Elérhetőségek
 ├── impresszum.html         Szolgáltatói adatok (Moltax Kft.)
 ├── adatkezeles.html        Adatkezelési tájékoztató (11 szakasz)

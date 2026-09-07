@@ -1,6 +1,7 @@
 /* PARTON — interakciók
    1) mobil menü  2) fejléc árnyék  3) megjelenítő animáció
    4) görgetéssel vezérelt vízszintes galéria  5) kézírás animáció
+   6) galéria nagy nézet (lightbox)
    Minden rész opcionális: ha az adott elem nincs az oldalon, kimarad. */
 
 (function () {
@@ -373,5 +374,120 @@
 
       penIo.observe(pen);
     }
+  }
+
+  /* --- 6. Galéria nagy nézet ------------------------------------------ */
+  /* A nagy nézet a mozaik csempéiből dolgozik: a rákattintott kép srcset-jét
+     és alt szövegét emeli át, így nincs külön képlista, amit karban kellene
+     tartani. Lapozás: nyilak, billentyű (← →), húzás. */
+  var lightbox = document.getElementById('lightbox');
+  var mosaic = document.getElementById('mosaic');
+
+  if (lightbox && mosaic) {
+    var tiles = Array.prototype.slice.call(mosaic.querySelectorAll('.mosaic__btn'));
+    var lbSource = document.getElementById('lightbox-source');
+    var lbImg = document.getElementById('lightbox-img');
+    var lbCount = document.getElementById('lightbox-count');
+    var lbPrev = lightbox.querySelector('[data-lightbox-prev]');
+    var lbNext = lightbox.querySelector('[data-lightbox-next]');
+    var lbClose = lightbox.querySelector('.lightbox__close');
+    var lbIndex = -1;
+    var lastFocus = null;
+    var closeTimer = null;
+
+    lbImg.addEventListener('load', function () {
+      lbImg.classList.add('is-shown');
+    });
+
+    var showImage = function (i) {
+      if (!tiles.length) return;
+      lbIndex = (i + tiles.length) % tiles.length;
+
+      var tile = tiles[lbIndex];
+      var tileSource = tile.querySelector('source');
+      var tileImg = tile.querySelector('img');
+      var text = tileImg.getAttribute('alt') || '';
+
+      lbImg.classList.remove('is-shown');
+      lbSource.srcset = tileSource ? tileSource.getAttribute('srcset') || '' : '';
+      lbImg.src = tileImg.getAttribute('src');
+      lbImg.alt = text;
+      lbCount.textContent = (lbIndex + 1) + ' / ' + tiles.length;
+    };
+
+    var openLightbox = function (i) {
+      if (closeTimer) { window.clearTimeout(closeTimer); closeTimer = null; }
+      lastFocus = document.activeElement;
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      showImage(i);
+      /* két képkocka, hogy a hidden levétele után induljon az áttűnés */
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () { lightbox.classList.add('is-open'); });
+      });
+      lbClose.focus();
+    };
+
+    var closeLightbox = function () {
+      lightbox.classList.remove('is-open');
+      document.body.style.overflow = '';
+
+      var finish = function () {
+        closeTimer = null;
+        lightbox.hidden = true;
+        lbImg.classList.remove('is-shown');
+        lbImg.removeAttribute('src');
+        lbSource.removeAttribute('srcset');
+      };
+
+      if (reduced) finish();
+      else closeTimer = window.setTimeout(finish, 340);
+
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    };
+
+    /* A nagy nézet a megnyitásakor átveszi a fókuszt: a Tab a három
+       vezérlő között körbe jár, nem szökik ki a mögötte lévő oldalra. */
+    var trapFocus = function (e) {
+      var stops = [lbClose, lbPrev, lbNext];
+      var at = stops.indexOf(document.activeElement);
+
+      if (at === -1) { e.preventDefault(); stops[0].focus(); return; }
+      if (e.shiftKey && at === 0) { e.preventDefault(); stops[stops.length - 1].focus(); }
+      else if (!e.shiftKey && at === stops.length - 1) { e.preventDefault(); stops[0].focus(); }
+    };
+
+    tiles.forEach(function (btn, i) {
+      btn.addEventListener('click', function () { openLightbox(i); });
+    });
+
+    lbPrev.addEventListener('click', function () { showImage(lbIndex - 1); });
+    lbNext.addEventListener('click', function () { showImage(lbIndex + 1); });
+
+    Array.prototype.slice.call(lightbox.querySelectorAll('[data-lightbox-close]'))
+      .forEach(function (el) { el.addEventListener('click', closeLightbox); });
+
+    document.addEventListener('keydown', function (e) {
+      if (lightbox.hidden) return;
+
+      if (e.key === 'Escape') { e.preventDefault(); closeLightbox(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); showImage(lbIndex + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); showImage(lbIndex - 1); }
+      else if (e.key === 'Tab') { trapFocus(e); }
+    });
+
+    /* Érintésre húzással is lehet lapozni. */
+    var swipeFrom = null;
+
+    lightbox.addEventListener('touchstart', function (e) {
+      swipeFrom = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', function (e) {
+      if (swipeFrom === null) return;
+      var dx = e.changedTouches[0].clientX - swipeFrom;
+      swipeFrom = null;
+      if (Math.abs(dx) > 45) showImage(lbIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
   }
 })();
