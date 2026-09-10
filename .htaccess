@@ -1,0 +1,60 @@
+# Parton Rendezvenyterem - Apache konfiguracio (Rackhost webtarhely)
+#
+# FIGYELEM: ezt a fajlt CSAK azutan told fel, hogy az SSL mar aktiv a
+# tarhelyen. Elotte a HTTPS-atiranyitas vegtelen ciklust csinal.
+#
+# URL-forma: a kanonikus cim kiterjesztes nelkuli (pl. /rolunk), mert a
+# lapok <link rel="canonical"> es a sitemap.xml is igy hivatkozik rajuk.
+# Az oldalon belul a linkek .html-re mutatnak, azokat a 3. szabaly
+# atiranyitja a tiszta cimre.
+
+DirectoryIndex index.html
+Options -Indexes
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. http -> https es www -> apex, egy lepesben
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^(.*)$ https://partonrendezveny.hu/$1 [R=301,L]
+
+  # 2. /index.html -> /
+  RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+  RewriteRule ^ / [R=301,L]
+
+  # 3. /rolunk.html -> /rolunk
+  #    THE_REQUEST-et vizsgal, ezert nem kerul ciklusba a 5. szaballyal
+  RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L,QSA]
+
+  # 4. /rolunk/ -> /rolunk (zaro perjel levagasa, konyvtarak kivetelevel)
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.+)/$ /$1 [R=301,L]
+
+  # 5. /rolunk -> rolunk.html (belso, atiranyitas nelkul)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME}\.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
+</IfModule>
+
+# Sajat hibaoldal (az Apache nem hasznalja automatikusan, mint a GitHub Pages)
+ErrorDocument 404 /404.html
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 1 hour"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>

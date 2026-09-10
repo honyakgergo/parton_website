@@ -1838,14 +1838,14 @@ a.contact__value:hover{ color: var(--green); }
 .mosaic__item:nth-child(4){  grid-area:  3 /  7 / span 4 / span 6; }
 .mosaic__item:nth-child(5){  grid-area:  5 /  1 / span 2 / span 3; }
 .mosaic__item:nth-child(6){  grid-area:  5 /  4 / span 2 / span 3; }
-.mosaic__item:nth-child(7){  grid-area:  7 /  1 / span 4 / span 3; }
-.mosaic__item:nth-child(8){  grid-area:  7 /  4 / span 4 / span 6; }
+.mosaic__item:nth-child(7){  grid-area:  7 /  4 / span 4 / span 6; }
+.mosaic__item:nth-child(8){  grid-area:  7 /  1 / span 4 / span 3; }
 .mosaic__item:nth-child(9){  grid-area:  7 / 10 / span 2 / span 3; }
 .mosaic__item:nth-child(10){ grid-area:  9 / 10 / span 2 / span 3; }
 .mosaic__item:nth-child(11){ grid-area: 11 /  1 / span 2 / span 6; }
 .mosaic__item:nth-child(12){ grid-area: 11 /  7 / span 2 / span 6; }
-.mosaic__item:nth-child(13){ grid-area: 13 /  1 / span 4 / span 3; }
-.mosaic__item:nth-child(14){ grid-area: 13 /  4 / span 4 / span 6; }
+.mosaic__item:nth-child(13){ grid-area: 13 /  4 / span 4 / span 6; }
+.mosaic__item:nth-child(14){ grid-area: 13 /  1 / span 4 / span 3; }
 .mosaic__item:nth-child(15){ grid-area: 13 / 10 / span 2 / span 3; }
 .mosaic__item:nth-child(16){ grid-area: 15 / 10 / span 2 / span 3; }
 
@@ -1856,9 +1856,26 @@ a.contact__value:hover{ color: var(--green); }
   .mosaic{ grid-auto-rows: clamp(70px, 11vw, 132px); }
   .mosaic__item:nth-child(n){ grid-area: auto / auto / span 3 / span 6; }
 }
+/* Telefonon a mozaik ritmusa: egy teljes szélességű fekvő kép, utána két
+   négyzet egymás mellett, majd újra egy fekvő, és így tovább. A sorok
+   magassága a képarányból jön (aspect-ratio), nem sormagasságból, így a két
+   négyzet mindig pontosan négyzet. A csempéken csak a megjelenítés vág
+   (object-fit: cover) – a nagy nézet a teljes, vágatlan képet mutatja
+   (.lightbox__figure img: object-fit: contain).
+   A teljes szélességű helyek a 1., 4., 7., 10., 13. és 16. képre esnek,
+   ezért a jelölésben a két álló kép (bemutato-2, kapcsolat-1) a 8., illetve
+   a 14. helyen áll: így négyzetbe kerül, nem fekvőbe. */
 @media (max-width: 640px){
-  .mosaic{ grid-auto-rows: clamp(46px, 13vw, 78px); }
-  .mosaic__item:nth-child(n){ grid-area: auto / auto / span 4 / span 12; }
+  .mosaic{ grid-auto-rows: auto; }
+  .mosaic__item:nth-child(n){
+    grid-area: auto;
+    grid-column: span 6;
+    aspect-ratio: 1 / 1;
+  }
+  .mosaic__item:nth-child(3n+1){
+    grid-column: 1 / -1;
+    aspect-ratio: 3 / 2;
+  }
 }
 
 /* Nagy nézet. A háttér nem fekete, hanem a márka mélyzöldje – a krém
