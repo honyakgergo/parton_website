@@ -15,6 +15,7 @@ parton_website/
 ├── szallas.html            Szállás – 4 kétfős szoba, 8 fő részére
 ├── szolgaltatasok.html     Mit tartalmaz a helyszínbérlés
 ├── rendezvenyek.html       6 alkalomtípus (horgonyokkal: #eskuvok stb.)
+├── workshopok.html         Saját workshopok – kártyák, részletek <dialog>-ban
 ├── arak.html               Árak és ajánlatkérés
 ├── galeria.html            Galéria – 16 kép mozaikban, nagy nézettel
 ├── kapcsolat.html          Elérhetőségek

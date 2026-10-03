@@ -2002,6 +2002,340 @@ a.contact__value:hover{ color: var(--green); }
   .lightbox__nav--next{ right: clamp(6px, 2vw, 16px); }
 }
 
+/* --- 20b. Workshopok ---------------------------------------------------- */
+/* Nyitósáv: kép nélküli, középre zárt zöld sáv. Szándékosan alacsony, hogy a
+   bézs és a workshopkártyák már az első képernyőn látszódjanak – a kártyák
+   felső széle bele is nyúlik a zöldbe (--ws-overlap). */
+.ws-hero{
+  --ws-overlap: clamp(48px, 6vw, 96px);
+  background: var(--green-dark);
+  color: rgba(255, 246, 224, .9);
+  text-align: center;
+  padding-block: clamp(36px, 4.4vw, 72px) calc(clamp(30px, 3.2vw, 50px) + var(--ws-overlap));
+}
+.ws-hero__inner{ max-width: 60rem; }
+.ws-hero .kicker{ color: rgba(255, 246, 224, .72); margin-bottom: 1.2em; }
+.ws-hero h1{
+  color: var(--cream);
+  font-size: clamp(2.3rem, 4.4vw, 3.8rem);
+  font-weight: 400;
+}
+.ws-hero .divider{ margin: 1em auto 1.2em; }
+.ws-hero .lede{ max-width: 54rem; margin-inline: auto; color: rgba(255, 246, 224, .9); }
+
+.ws-program{ padding-top: 0; }
+.ws-program .ws-grid{
+  position: relative;
+  margin-top: calc(-1 * clamp(48px, 6vw, 96px));
+}
+
+.ws-grid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(22px, 2.4vw, 40px);
+}
+@media (max-width: 1000px){ .ws-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px){  .ws-grid{ grid-template-columns: minmax(0, 1fr); } }
+
+/* Kártya: az egész felület kattintható (a cím gombjának ::after-je feszül
+   rá), így a kártyán belül nincs egymásba ágyazott interaktív elem. */
+.ws{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream-light);
+  border: 1px solid var(--line);
+}
+/* A .reveal saját transitionje (késleltetéssel) felülírná a hover átmenetét,
+   ezért itt mindkettőt felsoroljuk. Az emelés a különálló translate
+   tulajdonsággal megy, így nem akad össze a .reveal transformjával. */
+.ws.reveal{
+  transition: opacity var(--slow) var(--ease), transform var(--slow) var(--ease),
+              translate .5s var(--ease), box-shadow .5s var(--ease),
+              border-color .5s var(--ease);
+  transition-delay: var(--d, 0ms), var(--d, 0ms), 0s, 0s, 0s;
+}
+.ws__media{
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  background: var(--cream-dim);
+}
+.ws__media img{
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease);
+}
+
+.ws__date{
+  position: absolute;
+  top: 14px; left: 14px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 58px;
+  margin: 0;
+  padding: 8px 10px 7px;
+  background: var(--cream);
+  color: var(--green-dark);
+  line-height: 1;
+}
+.ws__day{ font-family: var(--display); font-size: 1.9rem; font-weight: 500; }
+.ws__month{
+  margin-top: 4px;
+  font-size: .6rem;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+/* Hover csak egérrel és nem telefonos szélességen: ilyenkor a kártya
+   megemelkedik, a kép finoman nagyít, és a rövid ismertető zöld fátyolként
+   egyszerre tűnik fel a kép fölött (a .ws__media-n belül, a teljes képet fedi).
+   Telefonon nincs hover-hatás és nincs ismertető: a kártya koppintásra rögtön a részleteket nyitja. */
+.ws__peek{ display: none; }
+.ws__peek-cta{
+  font-size: .64rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+.ws__peek-cta::after{ content: "  →"; }
+@media (hover: hover) and (min-width: 641px){
+  .ws:hover{
+    translate: 0 -5px;
+    border-color: var(--line-strong);
+    box-shadow: 0 22px 44px -28px rgba(78, 91, 63, .45);
+  }
+  .ws:hover .ws__media img{ transform: scale(1.05); }
+  .ws__peek{
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1em;
+    margin: 0;
+    padding: clamp(20px, 2vw, 28px);
+    background: linear-gradient(to top, rgba(54, 64, 42, .94) 30%, rgba(54, 64, 42, .72));
+    color: rgba(255, 246, 224, .94);
+    font-size: .88rem;
+    line-height: 1.65;
+    opacity: 0;
+    transition: opacity .4s var(--ease);
+  }
+  .ws:hover .ws__peek,
+  .ws:focus-within .ws__peek{ opacity: 1; }
+}
+
+.ws__body{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: clamp(20px, 2vw, 28px) clamp(20px, 2vw, 28px) clamp(18px, 1.8vw, 24px);
+}
+.ws__meta{
+  margin: 0 0 .7em;
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+}
+.ws__meta .nowrap{ white-space: nowrap; }
+.ws__title{ font-size: clamp(1.4rem, 1.8vw, 1.7rem); }
+.ws__open{
+  all: unset;
+  cursor: pointer;
+  text-wrap: balance;
+}
+.ws__open::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.ws__open:focus-visible{ outline: none; }
+.ws__open:focus-visible::after{ outline: 2px solid var(--green-dark); outline-offset: 3px; }
+.ws__sub{
+  margin: .45em 0 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.08rem;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+.ws__host{
+  margin: .9em 0 0;
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+.ws__foot{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: auto 0 0;
+  padding-top: 1.1em;
+  border-top: 1px solid var(--line);
+}
+/* a lábsort a margin-top:auto alulra tolja; ez a minimális távolság fölötte */
+.ws__host{ margin-bottom: 1.3em; }
+.ws__price{
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--green-dark);
+}
+.ws__price small{ font-family: var(--body); font-size: .72rem; color: var(--ink-soft); }
+.ws__seats{
+  font-size: .66rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* lezajlott workshop (a main.js jelöli a data-ws-end alapján) */
+.ws.is-past .ws__media img{ filter: grayscale(.8); opacity: .7; }
+.ws.is-past .ws__date::after{
+  content: "Lezajlott";
+  margin-top: 6px;
+  font-size: .5rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.wsd.is-past .wsd__cta .btn{ display: none; }
+
+.ws-terms__head{ max-width: 46rem; margin-bottom: clamp(36px, 4vw, 60px); }
+.ws-terms__head p:last-child{ color: var(--ink-soft); }
+.ws-terms__head a{ color: var(--green-dark); }
+
+/* Részletek: natív <dialog>. A dialog maga kitölti a képernyőt (átlátszó), a
+   tartalom a .wsd__inner-ben görög – így a háttérre kattintás egyszerűen a
+   dialogon landol, és bezárja. */
+.wsd{
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: clamp(0px, 3vh, 40px) var(--gutter);
+  border: 0;
+  background: transparent;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.wsd::backdrop{
+  background: rgba(38, 44, 30, .62);
+  -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+}
+.wsd[open]{ animation: wsd-in .45s var(--ease); }
+@keyframes wsd-in{ from{ opacity: 0; transform: translateY(18px); } }
+html.has-dialog{ overflow: hidden; }
+
+.wsd__inner{
+  position: relative;
+  max-width: 880px;
+  margin: 0 auto;
+  background: var(--cream);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .5);
+}
+.wsd__close{
+  /* sticky: görgetés közben is a képernyő tetején marad, így bármikor be
+     lehet zárni. A negatív alsó margó miatt nem tolja le a képet. */
+  position: sticky;
+  top: 14px;
+  z-index: 3;
+  display: grid;
+  margin: 14px 14px -60px auto;
+  place-items: center;
+  width: 46px; height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--green-dark);
+  cursor: pointer;
+  box-shadow: 0 4px 16px -6px rgba(0, 0, 0, .35);
+  transition: transform .35s var(--ease), background .35s var(--ease);
+}
+.wsd__close:hover{ transform: rotate(90deg); background: #fff; }
+.wsd__media{ margin: 0; }
+.wsd__media img{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 52vh;
+  object-fit: cover;
+}
+/* a plakát saját arányában, vágás nélkül látszik */
+.wsd__media--poster img{ aspect-ratio: auto; max-height: none; }
+.wsd__body{ padding: clamp(28px, 4vw, 56px) clamp(22px, 5vw, 64px) clamp(32px, 4vw, 52px); }
+.wsd__body .kicker{
+  margin-bottom: 1em;
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  color: var(--green-dark);
+}
+.wsd__title{ font-size: clamp(1.9rem, 3.4vw, 2.7rem); font-weight: 400; }
+.wsd__sub{
+  margin: .4em 0 0;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  color: var(--ink-soft);
+}
+.wsd__facts{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px clamp(20px, 3vw, 40px);
+  margin: clamp(24px, 3vw, 34px) 0 0;
+  padding: clamp(18px, 2vw, 24px) 0;
+  border-block: 1px solid var(--line-strong);
+}
+.wsd__facts dt{
+  font-size: .62rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.wsd__facts dd{ margin: .2em 0 0; font-size: .92rem; color: var(--ink); }
+.wsd__cta{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 22px;
+  margin: clamp(22px, 2.6vw, 30px) 0 clamp(28px, 3.4vw, 40px);
+}
+.wsd__cta p{ margin: 0; font-size: .82rem; color: var(--ink-soft); }
+.wsd__lead{
+  font-family: var(--display);
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+.prose .wsd__lead{ color: var(--ink); }
+.wsd__text ul{ padding-left: 1.2em; color: var(--ink-soft); }
+.wsd__text li{ margin-bottom: .35em; }
+.wsd__text li::marker{ color: var(--green); }
+.wsd__text h3{ font-size: clamp(1.3rem, 1.8vw, 1.55rem); margin-bottom: .6em; }
+.wsd__terms{
+  margin: 2.4em 0 0;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--line);
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+.wsd__terms a{ color: var(--green-dark); }
+
+@media (max-width: 640px){
+  .wsd{ padding: 0; }
+  .wsd__inner{ min-height: 100%; box-shadow: none; }
+  .wsd__facts{ grid-template-columns: minmax(0, 1fr); }
+  .wsd__close{ top: 10px; margin: 10px 10px -56px auto; }
+}
+
 /* --- 21. Megjelenítő animáció ------------------------------------------ */
 .reveal{
   opacity: 0;

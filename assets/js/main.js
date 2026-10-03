@@ -1,7 +1,7 @@
 /* PARTON — interakciók
    1) mobil menü  2) fejléc árnyék  3) megjelenítő animáció
    4) görgetéssel vezérelt vízszintes galéria  5) kézírás animáció
-   6) galéria nagy nézet (lightbox)
+   6) galéria nagy nézet (lightbox)  7) workshop részletek (dialog)
    Minden rész opcionális: ha az adott elem nincs az oldalon, kimarad. */
 
 (function () {
@@ -594,5 +594,78 @@
       swipeFrom = null;
       if (Math.abs(dx) > 45) showImage(lbIndex + (dx < 0 ? 1 : -1));
     }, { passive: true });
+  }
+
+  /* --- 7. Workshop részletek ------------------------------------------ */
+  /* Minden workshopnak saját <dialog>-ja van (id="ws-…"). A kártyák és a
+     nyitósáv programsora data-ws-open-nel nyitják; a címsor horgonya
+     (#ws-pizza) is megnyitja, így egy-egy workshop közvetlenül linkelhető.
+     A bezárást, az Escape-et és a fókusz visszaadását a böngésző intézi. */
+  var wsDialogs = document.querySelectorAll('dialog.wsd');
+
+  if (wsDialogs.length && typeof wsDialogs[0].showModal === 'function') {
+    var MAIL = 'info@partonrendezveny.hu';
+    var now = Date.now();
+
+    var openWs = function (id) {
+      var dlg = document.getElementById(id);
+      if (!dlg || dlg.open) return;
+      wsDialogs.forEach(function (d) { if (d.open) d.close(); });
+      dlg.showModal();
+      dlg.scrollTop = 0;
+      document.documentElement.classList.add('has-dialog');
+      if (location.hash !== '#' + id) history.replaceState(null, '', '#' + id);
+    };
+
+    wsDialogs.forEach(function (dlg) {
+      dlg.addEventListener('close', function () {
+        document.documentElement.classList.remove('has-dialog');
+        if (location.hash === '#' + dlg.id) {
+          history.replaceState(null, '', location.pathname + location.search);
+        }
+      });
+      /* a háttérre (a dialog saját, átlátszó felületére) kattintva bezárul */
+      dlg.addEventListener('click', function (e) {
+        if (e.target === dlg || e.target.closest('.wsd__close')) dlg.close();
+        /* oldalon belüli link (pl. a feltételekhez): előbb bezárjuk */
+        var link = e.target.closest('a[href^="#"]');
+        if (link) dlg.close();
+      });
+
+      /* Jelentkezés: előre kitöltött levél a workshop nevével. */
+      var mail = dlg.querySelector('[data-ws-mail]');
+      if (mail) {
+        var name = mail.getAttribute('data-ws-mail');
+        var extra = mail.getAttribute('data-ws-mail-extra');
+        var body = 'Kedves Parton,\n\nszeretnék jelentkezni a következő workshopra: ' + name +
+          '\n\nNév: \nTelefonszám: \nLétszám (fő): \n' + (extra ? extra + ' \n' : '') +
+          '\nKöszönöm!';
+        mail.href = 'mailto:' + MAIL + '?subject=' +
+          encodeURIComponent('Jelentkezés – ' + name) + '&body=' + encodeURIComponent(body);
+      }
+    });
+
+    /* lezajlott workshopok: halványítva, jelentkezés gomb nélkül */
+    document.querySelectorAll('.ws[data-ws-end]').forEach(function (card) {
+      if (Date.parse(card.getAttribute('data-ws-end')) > now) return;
+      card.classList.add('is-past');
+      var opener = card.querySelector('[data-ws-open]');
+      var dlg = opener && document.getElementById(opener.getAttribute('data-ws-open'));
+      if (dlg) dlg.classList.add('is-past');
+    });
+
+    document.addEventListener('click', function (e) {
+      var opener = e.target.closest('[data-ws-open]');
+      if (!opener) return;
+      e.preventDefault();
+      openWs(opener.getAttribute('data-ws-open'));
+    });
+
+    var fromHash = function () {
+      var id = location.hash.slice(1);
+      if (/^ws-/.test(id)) openWs(id);
+    };
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
   }
 })();
