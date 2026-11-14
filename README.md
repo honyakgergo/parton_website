@@ -97,10 +97,36 @@ A `instructions/Parton impresszum.docx` az irányadó forrás. Amit onnan
 | E-mail | `info@partonrendezveny.hu` |
 | Telefon | +36 70 326 2692 |
 | Domain | `https://partonrendezveny.hu` |
-| Terembérlés | 170 000 Ft / rendezvény, plusz óradíj nélkül |
+| Terembérlés | 150 000 Ft / rendezvény, plusz óradíj nélkül |
 | Előleg / kaució / takarítás | 30 000 Ft / 50 000 Ft / +20 000 Ft |
 | Befogadóképesség | beltéren 48 fő, kültéren 100 fő |
 | Szállás | 4 db kétfős szoba, összesen 8 fő |
+
+## Új workshop felvétele
+
+A jelentkezés a booked4.us-on fut (`https://parton.booked4.us/public/book`), a
+weboldal csak oda linkel (nincs beágyazott kód, így süti sincs).
+
+1. **booked4.us (admin):** Szolgáltatások → Új szolgáltatás a *Parton
+   Workshop* naptárhoz (hossz percben, ár). Az *Időpontok* fülön egyszeri
+   időpont: nap, kezdés, férőhely. A Kérdéseknél (számlázási név, cím)
+   ellenőrizd, hogy az új szolgáltatáshoz is hozzá vannak-e rendelve. Ha a
+   dátum túl van az *Előjegyzési időszakon*, növeld meg (naptár
+   beállításai → Alapbeállítások), különben a vendégek nem látják.
+2. **`workshopok.html`:** kártya (`.ws`, a `data-ws-end` a befejezés
+   időpontja, utána a kártya halványul), saját `<dialog id="ws-…">`, és egy
+   `Event` a JSON-LD-ben (`offers.url` = foglalási link). A *Jelentkezem*
+   gomb `href`-je a foglalási link; ha `mailto:` marad, a `main.js`
+   tartalékként előre kitöltött levelet készít a `data-ws-mail` alapján.
+3. **Kép:** felvétel a `tools/optimize_images.py` `PHOTOS` szótárába.
+
+A workshop-ablakokban lévő „Hogyan foglalj a naptárban?” útmutató képe a
+foglalási naptár képernyőképe (`assets/img/foglalas-naptar.png`, 2045×982).
+Egy inline SVG mutatja: a `viewBox` vágja ki a naptárat, a jelölések (keret,
+címkék) az eredeti kép pixeleiben állnak. Ha új képernyőkép készül, a
+jelölések helyét is ellenőrizni kell.
+
+A fizetés menete és a booked4.us beállításai: `BOOKING_PLAN.md`.
 
 ## Mielőtt élesbe megy — nyitott kérdések
 

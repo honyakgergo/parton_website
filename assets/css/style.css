@@ -2206,6 +2206,7 @@ a.contact__value:hover{ color: var(--green); }
   text-transform: uppercase;
 }
 .wsd.is-past .wsd__cta .btn{ display: none; }
+.wsd.is-past .wsd__howto{ display: none; }
 
 .ws-terms__head{ max-width: 46rem; margin-bottom: clamp(36px, 4vw, 60px); }
 .ws-terms__head p:last-child{ color: var(--ink-soft); }
@@ -2310,6 +2311,61 @@ html.has-dialog{ overflow: hidden; }
   margin: clamp(22px, 2.6vw, 30px) 0 clamp(28px, 3.4vw, 40px);
 }
 .wsd__cta p{ margin: 0; font-size: .82rem; color: var(--ink-soft); }
+
+/* Foglalási útmutató: lenyitható doboz a gomb alatt, a naptár képernyőképével.
+   A kép (assets/img/foglalas-naptar.png) egy inline SVG-ben van; a viewBox
+   vágja ki belőle a naptárat, a jelölések az eredeti kép pixeleiben állnak. */
+.wsd__howto{
+  margin: calc(-1 * clamp(10px, 1.6vw, 20px)) 0 clamp(28px, 3.4vw, 40px);
+  border: 1px solid var(--line-strong);
+  background: var(--cream-light);
+}
+.wsd__howto summary{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  cursor: pointer;
+  list-style: none;
+}
+.wsd__howto summary::-webkit-details-marker{ display: none; }
+.wsd__howto summary::after{
+  content: "+";
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform .3s var(--ease);
+}
+.wsd__howto[open] summary::after{ transform: rotate(45deg); }
+.wsd__howto-body{ padding: 0 18px 18px; }
+.wsd__howto-fig{
+  margin: 0;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.wsd__howto-marks{ display: block; width: 100%; height: auto; aspect-ratio: 1525 / 762; }
+.wsd__howto-marks > rect,
+.wsd__howto-marks > circle{ fill: none; stroke: var(--green); stroke-width: 5; }
+.wsd__howto-tag rect,
+.wsd__howto-tag path{ fill: var(--green-dark); }
+.wsd__howto-tag text{
+  fill: #fff;
+  font-size: 23px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+.wsd__howto ol{
+  margin: 16px 0 0;
+  padding-left: 1.3em;
+  font-size: .88rem;
+  color: var(--ink-soft);
+}
+.wsd__howto li{ margin-bottom: .4em; }
+.wsd__howto li::marker{ color: var(--green); font-weight: 600; }
 .wsd__lead{
   font-family: var(--display);
   font-size: 1.35rem;

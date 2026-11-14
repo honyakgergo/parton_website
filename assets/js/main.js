@@ -632,9 +632,11 @@
         if (link) dlg.close();
       });
 
-      /* Jelentkezés: előre kitöltött levél a workshop nevével. */
+      /* Jelentkezés: a gomb a booked4.us foglalási oldalára mutat. Ha egy
+         gombnak még nincs foglalási linkje (a href mailto:), tartalékként
+         előre kitöltött levél készül a workshop nevével. */
       var mail = dlg.querySelector('[data-ws-mail]');
-      if (mail) {
+      if (mail && /^mailto:/i.test(mail.getAttribute('href') || '')) {
         var name = mail.getAttribute('data-ws-mail');
         var extra = mail.getAttribute('data-ws-mail-extra');
         var body = 'Kedves Parton,\n\nszeretnék jelentkezni a következő workshopra: ' + name +
