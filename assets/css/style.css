@@ -2031,10 +2031,10 @@ a.contact__value:hover{ color: var(--green); }
 
 .ws-grid{
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(22px, 2.4vw, 40px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(18px, 1.8vw, 32px);
 }
-@media (max-width: 1000px){ .ws-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1200px){ .ws-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px){  .ws-grid{ grid-template-columns: minmax(0, 1fr); } }
 
 /* Kártya: az egész felület kattintható (a cím gombjának ::after-je feszül

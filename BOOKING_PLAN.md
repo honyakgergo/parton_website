@@ -65,9 +65,9 @@ script on our pages.
    | Workshop | Date | Price | Max |
    |---|---|---|---|
    | „Nem tudom, mi legyek!” | 2026-11-04 17:00–19:00 | 5 000 Ft | 48 |
-   | Nápolyi pizza | 2026-11-14 10:00–14:00 | 29 000 Ft | 10 |
+   | Nápolyi pizza | 2027-02-20 10:00–14:00 | 29 000 Ft | 10 |
    | Téli tea | 2026-11-20 17:00–20:00 | 20 000 Ft | 12 |
-   | Adventi koszorú | 2026-11-28 10:00–13:00 | 29 000 Ft | 10 |
+   | Adventi koszorú | 2026-11-28 10:00–13:00 | 25 000 Ft | 10 |
    | Smink | 2026-12-05 10:00–13:00 | 20 000 Ft | 6 |
    | Natúr kozmetikum | 2026-12-11 17:00–20:00 | 25 000 Ft | 12 |
 
